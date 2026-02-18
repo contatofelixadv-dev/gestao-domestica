@@ -691,6 +691,10 @@
         </div>
       </div>
 
+      <div class="info-box">
+        💡 <strong>Cálculo legal (CLT Art. 7º):</strong> Valor hora = Salário ÷ 220 (divisor fixo para jornada 44h semanais)
+      </div>
+
       <div class="card">
         <div class="card-title">Histórico</div>
         <div class="table-wrap">
@@ -1014,16 +1018,19 @@ function calcINSS(sal) {
   return Math.min(inss, s);
 }
 
-// Hora extra value
-// horasSemana = seg-sex(5×8) + sab(1×4) = 44h
+// Hora extra value - CORRECT Brazilian labor law formula
+// For 44h/week, divisor is ALWAYS 220 (CLT Art. 7º)
 function calcHE(salario, minutos, tipo) {
   const s = NUM(salario);
-  const jornadaSeg = NUM(CFG.hrSegFex) || 8;
-  const jornadaSab = NUM(CFG.hrSab) || 4;
-  const horasSemana = jornadaSeg * 5 + jornadaSab;
-  const horasMes = horasSemana * 4.333;
-  const valorHora = s / horasMes;
-  const adicional = tipo === '50%' ? 1.5 : 2.0;
+  const DIVISOR_44H = 220; // Fixed by law for 44h workweek
+  const valorHora = s / DIVISOR_44H;
+  
+  // Accept multiple formats: "50%", "0.5", 0.5
+  let adicional = 1.5; // default 50%
+  if (tipo === '100%' || tipo === '1' || tipo === 1 || tipo === '1.0') {
+    adicional = 2.0;
+  }
+  
   return valorHora * (minutos / 60) * adicional;
 }
 
@@ -1550,15 +1557,16 @@ function openModalHE() {
       <div class="form-row">
         <label>Tipo</label>
         <select id="m-he-tipo">
-          <option value="50%">50% (dias úteis)</option>
-          <option value="100%">100% (dom/feriado)</option>
+          <option value="50%">50% — Dias úteis (seg-sex)</option>
+          <option value="100%">100% — Domingo/Feriado/Noturna</option>
         </select>
       </div>
       <div class="form-row">
         <label>Minutos</label>
-        <input type="number" id="m-he-min" min="1" placeholder="90">
+        <input type="number" id="m-he-min" min="1" placeholder="90" oninput="previewHE()">
       </div>
     </div>
+    <div style="margin-top:8px;font-size:13px;font-weight:600;color:var(--accent)" id="m-he-preview"></div>
     <div class="form-row">
       <label>Motivo</label>
       <input type="text" id="m-he-motivo" placeholder="Ex: evento, serviço extra">
@@ -1568,6 +1576,16 @@ function openModalHE() {
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
     </div>
   `);
+}
+
+function previewHE() {
+  const min = NUM(document.getElementById('m-he-min')?.value);
+  const tipo = document.getElementById('m-he-tipo')?.value;
+  if (!min) return;
+  const salario = NUM(CFG.salario);
+  const val = calcHE(salario, min, tipo);
+  const el = document.getElementById('m-he-preview');
+  if (el) el.textContent = `${minToHM(min)} = ${R(val)}`;
 }
 
 async function saveHE() {
