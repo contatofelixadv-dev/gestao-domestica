@@ -7,680 +7,518 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f3f4f6; --surface: #ffffff;
-    --primary: #3b82f6; --primary-dark: #2563eb;
-    --text: #1f2937; --text-light: #6b7280;
+    --bg: #f0f2f5; --surface: #ffffff;
+    --primary: #0f172a; --accent: #3b82f6;
+    --text: #334155; --text-light: #64748b;
     --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-    --border: #e5e7eb;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --border: #e2e8f0;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; font-size: 14px; }
 
-  /* SIDEBAR */
+  /* LAYOUT */
   aside { width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; }
-  .logo { padding: 24px; font-size: 20px; font-weight: 800; color: var(--primary-dark); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  nav { flex: 1; padding: 16px; overflow-y: auto; }
-  .nav-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; color: var(--text-light); background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; margin-bottom: 4px; transition: all 0.2s; text-align: left; }
-  .nav-item:hover { background: #eff6ff; color: var(--primary); }
-  .nav-item.active { background: #dbeafe; color: var(--primary-dark); font-weight: 600; }
-  .nav-icon { width: 20px; text-align: center; font-size: 16px; }
-
-  /* MAIN */
-  main { flex: 1; overflow-y: auto; padding: 32px; position: relative; }
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-  .title h1 { font-size: 24px; font-weight: 700; color: var(--text); }
-  .title p { color: var(--text-light); margin-top: 4px; }
+  main { flex: 1; overflow-y: auto; padding: 30px; }
+  
+  /* NAV & HEADER */
+  .brand { padding: 24px; font-size: 18px; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--border); letter-spacing: -0.5px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 20px; color: var(--text-light); border: none; background: transparent; cursor: pointer; font-weight: 500; transition: 0.2s; text-align: left; margin-bottom: 2px; }
+  .nav-item:hover { background: #f1f5f9; color: var(--primary); }
+  .nav-item.active { background: #e0f2fe; color: var(--accent); font-weight: 600; border-right: 3px solid var(--accent); }
+  
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+  .page-title { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
 
   /* CARDS & GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 24px; }
-  .card { background: var(--surface); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 24px; }
-  .card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-  
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  .card h3 { font-size: 15px; font-weight: 600; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
   /* METRICS */
-  .metric { padding: 20px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; }
-  .metric-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
-  .metric-value { font-size: 28px; font-weight: 700; color: var(--text); }
-  .metric-sub { font-size: 12px; margin-top: 4px; color: var(--text-light); }
-  .metric-highlight { color: var(--primary-dark); }
-  
+  .kpi { padding: 20px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); position: relative; overflow: hidden; }
+  .kpi-lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
+  .kpi-val { font-size: 26px; font-weight: 700; color: var(--primary); letter-spacing: -1px; }
+  .kpi-sub { font-size: 13px; margin-top: 4px; color: var(--text-light); }
+  .kpi-tag { position: absolute; top: 15px; right: 15px; font-size: 20px; opacity: 0.2; }
+
   /* FORMS & TABLES */
-  .form-group { margin-bottom: 16px; }
-  .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
-  .form-row > div { flex: 1; }
+  .row { display: flex; gap: 15px; margin-bottom: 15px; }
+  .row > div { flex: 1; }
   label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
-  input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: border 0.2s; }
-  input:focus, select:focus { border-color: var(--primary); ring: 2px solid #dbeafe; }
+  input, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; color: var(--primary); }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
   
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; gap: 8px; }
-  .btn-primary { background: var(--primary-dark); color: white; }
-  .btn-primary:hover { background: var(--primary); }
-  .btn-danger { background: #fee2e2; color: var(--danger); }
-  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn { width: 100%; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: #1e293b; }
+  .btn-sm { width: auto; padding: 8px 16px; font-size: 13px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th { text-align: left; padding: 12px 16px; background: #f9fafb; color: var(--text-light); font-weight: 600; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
-  td { padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
-  tr:last-child td { border-bottom: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 12px; background: #f8fafc; color: var(--text-light); font-weight: 600; border-bottom: 1px solid var(--border); }
+  td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--text); }
   
-  .badge { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-  .badge-pendente { background: #fef3c7; color: #b45309; }
-  .badge-pago, .badge-ok { background: #d1fae5; color: #047857; }
-  .badge-aviso { background: #fee2e2; color: #b91c1c; }
+  .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .bg-green { background: #dcfce7; color: #166534; }
+  .bg-yellow { background: #fef9c3; color: #854d0e; }
 
-  /* CALC BOX (Preview) */
-  .calc-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .calc-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-  .calc-line.total { border-top: 2px solid var(--border); margin-top: 12px; padding-top: 12px; font-weight: 700; font-size: 16px; color: var(--primary-dark); }
-  .text-danger { color: var(--danger); }
+  /* DETALHES FINANCEIROS */
+  .fin-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px dashed var(--border); }
+  .fin-row:last-child { border-bottom: none; }
+  .fin-total { font-weight: 700; font-size: 16px; color: var(--primary); border-top: 2px solid var(--border); margin-top: 10px; padding-top: 10px; border-bottom: none; }
+  .text-red { color: var(--danger); }
+  .text-blue { color: var(--accent); }
+  
+  /* ALERTS */
+  .alert-box { padding: 12px; border-radius: 6px; font-size: 12px; margin-top: 10px; line-height: 1.4; }
+  .alert-warn { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
 
-  /* LOADER */
-  #overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* UTILS */
   .hidden { display: none !important; }
-  
-  /* LOGIN SCREEN */
-  #login-screen { max-width: 400px; width: 100%; padding: 40px; background: white; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border); }
+  #loader, #login { position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
 
-<div id="overlay">
-  <div id="loader" class="hidden" style="text-align:center">
-    <div class="spinner" style="margin:0 auto 16px"></div>
-    <h3 style="color:var(--text)">Sincronizando...</h3>
-    <p style="color:var(--text-light)">Buscando dados no Google Sheets</p>
-  </div>
-
-  <div id="login-screen">
-    <div style="font-size:48px; margin-bottom:16px">☁️</div>
-    <h2 style="margin-bottom:8px">Conectar Sistema</h2>
-    <p style="color:var(--text-light); margin-bottom:24px; font-size:13px">Cole a URL do Web App do Google Apps Script para acessar os dados.</p>
-    <div class="form-group">
-      <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/..." style="text-align:center">
-    </div>
-    <button class="btn btn-primary" style="width:100%" onclick="connectAPI()">Acessar Painel</button>
+<div id="loader" class="hidden"><div style="font-size:30px;animation:spin 1s infinite linear">⏳</div><p>Sincronizando...</p></div>
+<div id="login">
+  <div style="width:360px; text-align:center">
+    <h2 style="margin-bottom:10px">🔐 Acesso Seguro</h2>
+    <p style="color:#64748b; margin-bottom:20px; font-size:13px">Cole a URL do Google Apps Script para conectar.</p>
+    <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/..." style="margin-bottom:15px">
+    <button class="btn btn-primary" onclick="connect()">Conectar</button>
   </div>
 </div>
 
-<aside id="app-sidebar" class="hidden">
-  <div class="logo">🏠 Gestão Doméstica</div>
+<aside id="sidebar" class="hidden">
+  <div class="brand">🛡️ Gestão Doméstica</div>
   <nav>
-    <button class="nav-item active" onclick="nav('dashboard')" data-target="dashboard"><span class="nav-icon">📊</span>Dashboard</button>
-    <button class="nav-item" onclick="nav('pagamentos')" data-target="pagamentos"><span class="nav-icon">💰</span>Pagamentos</button>
-    <button class="nav-item" onclick="nav('horas')" data-target="horas"><span class="nav-icon">⏱️</span>Banco de Horas</button>
-    <button class="nav-item" onclick="nav('ferias')" data-target="ferias"><span class="nav-icon">🌴</span>Férias</button>
-    <button class="nav-item" onclick="nav('rescisao')" data-target="rescisao"><span class="nav-icon">⚠️</span>Rescisão</button>
-    <button class="nav-item" onclick="nav('config')" data-target="config"><span class="nav-icon">⚙️</span>Configurações</button>
+    <button class="nav-item active" onclick="nav('dashboard')" data-t="dashboard">📊 Visão Geral</button>
+    <button class="nav-item" onclick="nav('pagamentos')" data-t="pagamentos">💰 Folha de Pagamento</button>
+    <button class="nav-item" onclick="nav('horas')" data-t="horas">⏱️ Banco de Horas</button>
+    <button class="nav-item" onclick="nav('config')" data-t="config">⚙️ Configurações</button>
   </nav>
-  <div style="padding:20px; margin-top:auto">
-    <div style="font-size:11px; color:var(--text-light); text-align:center">
-      Status: <span style="color:var(--success)">● Online</span><br>
-      <a href="#" onclick="logout()" style="color:var(--danger); text-decoration:none">Desconectar</a>
-    </div>
+  <div style="margin-top:auto; padding:20px; font-size:11px; color:#94a3b8; text-align:center">
+    Sistema Protegido<br>v5.0 (Flex)
+    <br><a href="#" onclick="logout()" style="color:var(--danger)">Sair</a>
   </div>
 </aside>
 
-<main id="app-main" class="hidden">
+<main id="app" class="hidden">
 
   <div id="view-dashboard" class="view">
     <div class="header">
-      <div class="title">
-        <h1>Visão Geral</h1>
-        <p>Resumo em tempo real</p>
-      </div>
-      <button class="btn btn-sm btn-primary" onclick="initData()">🔄 Atualizar Dados</button>
+      <div class="page-title">Painel de Controle</div>
+      <button class="btn btn-primary btn-sm" onclick="init()">🔄 Atualizar</button>
     </div>
 
     <div class="grid-3">
-      <div class="metric" style="border-left: 4px solid var(--primary-dark)">
-        <div class="metric-label">Previsão Líquida (Este Mês)</div>
-        <div class="metric-value metric-highlight" id="dash-prev-liq">R$ 0,00</div>
-        <div class="metric-sub">Salário + HE Pendentes - INSS</div>
+      <div class="kpi">
+        <div class="kpi-lbl">Custo Total (Mês)</div>
+        <div class="kpi-val" id="kpi-custo">R$ 0,00</div>
+        <div class="kpi-sub">Salário + Impostos + HE</div>
+        <div class="kpi-tag">📉</div>
       </div>
-
-      <div class="metric">
-        <div class="metric-label">H.E. Pendentes (Mês)</div>
-        <div class="metric-value" style="color:var(--warning)" id="dash-he-count">0</div>
-        <div class="metric-sub text-danger" id="dash-he-val">Valor: R$ 0,00</div>
+      <div class="kpi">
+        <div class="kpi-lbl">Guia DAE Estimada</div>
+        <div class="kpi-val" style="color:var(--warning)" id="kpi-dae">R$ 0,00</div>
+        <div class="kpi-sub" id="lbl-vencimento">Vence dia 07</div>
+        <div class="kpi-tag">🏛️</div>
       </div>
-
-      <div class="metric">
-        <div class="metric-label">Próximo DAE</div>
-        <div class="metric-value" style="color:var(--success)" id="dash-dae">Dia 07</div>
-        <div class="metric-sub">Vencimento</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Detalhamento da Previsão Atual</h3>
-      <div id="dash-prev-details" style="font-size:13px; color:var(--text-light)">
-        Carregando...
+      <div class="kpi">
+        <div class="kpi-lbl">HE Pendentes</div>
+        <div class="kpi-val" id="kpi-he">0</div>
+        <div class="kpi-sub" id="kpi-he-val">R$ 0,00</div>
+        <div class="kpi-tag">⏱️</div>
       </div>
     </div>
 
     <div class="card">
-      <h3>Alertas do Sistema</h3>
-      <div id="dash-alerts">
-        <p style="color:var(--text-light)">Nenhum alerta pendente.</p>
+      <h3>📋 Detalhamento Financeiro (Previsão Atual)</h3>
+      <div class="grid-2">
+        <div>
+          <h4 style="font-size:13px; color:var(--text-light); margin-bottom:10px">FUNCIONÁRIA (A PAGAR)</h4>
+          <div class="fin-row"><span>Salário Base</span><span id="d-sal">R$ 0,00</span></div>
+          <div class="fin-row"><span>+ Horas Extras</span><span id="d-he">R$ 0,00</span></div>
+          <div class="fin-row"><span>+ Reflexo DSR</span><span id="d-dsr">R$ 0,00</span></div>
+          <div class="fin-row text-red"><span>- INSS (Retido)</span><span id="d-inss">R$ 0,00</span></div>
+          <div class="fin-row text-red"><span>- IRRF (Retido)</span><span id="d-irrf">R$ 0,00</span></div>
+          <div class="fin-row fin-total"><span>Líquido:</span><span id="d-pagar">R$ 0,00</span></div>
+        </div>
+        <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px dashed var(--border)">
+          <h4 style="font-size:13px; color:var(--text-light); margin-bottom:10px">GOVERNO (GUIA DAE/GPS)</h4>
+          <div class="fin-row"><span>FGTS (8%)</span><span id="d-fgts">R$ 0,00</span></div>
+          <div class="fin-row"><span>FGTS Multa (3.2%)</span><span id="d-fgts-comp" title="Antecipação de Multa">R$ 0,00</span></div>
+          <div class="fin-row"><span>INSS Patronal (8%)</span><span id="d-patr">R$ 0,00</span></div>
+          <div class="fin-row"><span>Seguro (0.8%)</span><span id="d-gilrat">R$ 0,00</span></div>
+          <div class="fin-row text-blue"><span>+ Repasse INSS Func.</span><span id="d-rep-inss">R$ 0,00</span></div>
+          <div class="fin-row fin-total" style="color:var(--warning)"><span>Total Guia:</span><span id="d-total-dae">R$ 0,00</span></div>
+        </div>
       </div>
     </div>
   </div>
 
   <div id="view-pagamentos" class="view hidden">
-    <div class="header">
-      <div class="title"><h1>Folha de Pagamento</h1><p>Histórico e Fechamento de Mês</p></div>
-    </div>
-
+    <div class="header"><div class="page-title">Folha de Pagamento</div></div>
+    
     <div class="grid-2">
       <div class="card">
-        <h3>Lançar Pagamento (Fechamento)</h3>
-        <div class="form-row">
-          <div><label>Mês</label><select id="pag-mes"><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
-          <div><label>Ano</label><input type="number" id="pag-ano" value="2026"></div>
+        <h3>Lançar Mês</h3>
+        <div class="row">
+          <div><label>Mês</label><select id="p-mes"><option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option><option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option><option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option></select></div>
+          <div><label>Ano</label><input type="number" id="p-ano" value="2026"></div>
         </div>
-        
-        <div class="form-row">
-          <div><label>Dias Úteis</label><input type="number" id="pag-uteis" value="25" oninput="simulaPag()"></div>
-          <div><label>Domingos/Fer.</label><input type="number" id="pag-dsr" value="5" oninput="simulaPag()"></div>
+        <div class="row">
+          <div><label>HE 50% (min)</label><input type="number" id="p-h50" value="0" oninput="simula()"></div>
+          <div><label>HE 100% (min)</label><input type="number" id="p-h100" value="0" oninput="simula()"></div>
         </div>
-
-        <div class="form-row">
-          <div><label>H.E. 50% (min)</label><input type="number" id="pag-he50" value="0" oninput="simulaPag()"></div>
-          <div><label>H.E. 100% (min)</label><input type="number" id="pag-he100" value="0" oninput="simulaPag()"></div>
+        <div class="row">
+          <div><label>Dias Úteis</label><input type="number" id="p-uteis" value="25" oninput="simula()"></div>
+          <div><label>Domingos/Fer</label><input type="number" id="p-dsr" value="5" oninput="simula()"></div>
         </div>
-
-        <div class="form-row">
-          <div><label>Faltas (R$)</label><input type="number" id="pag-faltas" value="0" step="0.01" oninput="simulaPag()"></div>
-          <div><label>Adiantamento (R$)</label><input type="number" id="pag-adiant" value="0" step="0.01" oninput="simulaPag()"></div>
+        <div class="row">
+          <div><label>Faltas (R$)</label><input type="number" id="p-falta" value="0" step="0.01" oninput="simula()"></div>
+          <div><label>Adiantamento (R$)</label><input type="number" id="p-adiant" value="0" step="0.01" oninput="simula()"></div>
         </div>
-
-        <button class="btn btn-primary" style="width:100%" onclick="savePagamento()">💾 Salvar Folha</button>
+        <button class="btn btn-primary" onclick="saveFolha()">💾 Salvar Pagamento</button>
       </div>
-
-      <div class="calc-box">
-        <h3>Demonstrativo (Prévia)</h3>
-        <div class="calc-line"><span>Salário Base</span><span id="c-sal">R$ 0,00</span></div>
-        <div class="calc-line"><span>(+) Total H.Extras</span><span id="c-he">R$ 0,00</span></div>
-        <div class="calc-line"><span>(+) Reflexo DSR s/ HE</span><span id="c-dsr">R$ 0,00</span></div>
-        <div class="calc-line text-danger"><span>(-) Faltas</span><span id="c-fal">- R$ 0,00</span></div>
-        <div style="border-bottom:1px dashed #ccc; margin:8px 0;"></div>
-        <div class="calc-line" style="font-weight:600"><span>= Base INSS/FGTS</span><span id="c-base">R$ 0,00</span></div>
-        <div class="calc-line text-danger"><span>(-) INSS (Progressivo)</span><span id="c-inss">- R$ 0,00</span></div>
-        <div class="calc-line text-danger"><span>(-) Adiantamento</span><span id="c-adiant">- R$ 0,00</span></div>
-        <div class="calc-line total"><span>Líquido a Pagar</span><span id="c-liq">R$ 0,00</span></div>
+      
+      <div class="card" style="background:#f1f5f9">
+        <h3>Holerite (Prévia)</h3>
+        <div class="fin-row"><span>Salário Base</span><span id="h-sal">R$ 0,00</span></div>
+        <div class="fin-row"><span>H.Extras + DSR</span><span id="h-he">R$ 0,00</span></div>
+        <div class="fin-row text-red"><span>- Faltas</span><span id="h-fal">R$ 0,00</span></div>
+        <div style="border-bottom:1px solid #ccc; margin:5px 0"></div>
+        <div class="fin-row"><span>Base de Cálculo</span><span id="h-base" style="font-weight:bold">R$ 0,00</span></div>
+        <div class="fin-row text-red"><span>- INSS</span><span id="h-inss">R$ 0,00</span></div>
+        <div class="fin-row text-red"><span>- IRRF</span><span id="h-irrf">R$ 0,00</span></div>
+        <div class="fin-row text-red"><span>- Adiantamento</span><span id="h-adiant">R$ 0,00</span></div>
+        <div class="fin-row fin-total"><span>Líquido:</span><span id="h-liq">R$ 0,00</span></div>
+        
+        <div class="alert-box alert-warn" id="h-aviso-venc">
+           Atenção: O vencimento oficial do DAE é dia 07.
+        </div>
       </div>
     </div>
-
-    <div class="card">
+    
+    <div class="card" style="margin-top:20px">
       <h3>Histórico</h3>
-      <table id="tb-pag"><thead><tr><th>Data</th><th>Salário Base</th><th>H.E. + DSR</th><th>INSS</th><th>Líquido</th><th>Status</th></tr></thead><tbody></tbody></table>
+      <table id="tb-pag"><thead><tr><th>Data</th><th>Bruto</th><th>Desc.</th><th>Líquido</th><th>Status</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
 
   <div id="view-horas" class="view hidden">
-    <div class="header">
-      <div class="title"><h1>Banco de Horas</h1><p>Registro de horas suplementares</p></div>
-    </div>
-    
+    <div class="header"><div class="page-title">Banco de Horas</div></div>
     <div class="grid-2">
-        <div class="card">
-            <h3>Nova Hora Extra</h3>
-            <div class="form-row">
-                <div><label>Data</label><input type="date" id="he-data"></div>
-                <div><label>Minutos</label><input type="number" id="he-min" placeholder="Ex: 60"></div>
-            </div>
-            <div class="form-row">
-                <div>
-                    <label>Tipo</label>
-                    <select id="he-tipo">
-                        <option value="50">50% (Dia útil)</option>
-                        <option value="100">100% (Dom/Feriado)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Motivo</label>
-                <input type="text" id="he-motivo" placeholder="Ex: Jantar atrasou">
-            </div>
-            <button class="btn btn-primary" onclick="saveHE()">Registrar</button>
+      <div class="card">
+        <h3>Registrar Ponto</h3>
+        <div class="row">
+          <div><label>Data</label><input type="date" id="he-data"></div>
+          <div><label>Minutos</label><input type="number" id="he-min" placeholder="Ex: 60"></div>
         </div>
-        <div class="metric" style="height:fit-content">
-            <div class="metric-label">Valor da Hora (Estimativa)</div>
-            <div style="font-size:14px; margin-bottom:10px">Baseado no salário atual</div>
-            <div class="calc-line"><span>Hora Normal:</span><span id="v-h-norm">R$ 0,00</span></div>
-            <div class="calc-line"><span>Hora 50%:</span><span id="v-h-50">R$ 0,00</span></div>
-            <div class="calc-line"><span>Hora 100%:</span><span id="v-h-100">R$ 0,00</span></div>
-            <div style="margin-top:10px; font-size:12px; color:var(--text-light)">*Não inclui DSR neste cálculo rápido.</div>
+        <div class="row">
+           <div><label>Tipo</label><select id="he-tipo"><option value="50">50% (Normal)</option><option value="100">100% (Dom/Fer)</option></select></div>
         </div>
+        <label>Motivo</label><input type="text" id="he-motivo" placeholder="Motivo da hora extra" style="margin-bottom:15px">
+        <button class="btn btn-primary" onclick="saveHE()">Registrar Hora Extra</button>
+      </div>
+      <div class="card">
+         <h3>Valores de Referência</h3>
+         <div class="fin-row"><span>Hora Normal</span><span id="ref-hn">R$ 0,00</span></div>
+         <div class="fin-row"><span>Hora 50%</span><span id="ref-h50">R$ 0,00</span></div>
+         <div class="fin-row"><span>Hora 100%</span><span id="ref-h100">R$ 0,00</span></div>
+      </div>
     </div>
-
-    <div class="card">
-      <h3>Histórico</h3>
-      <table id="tb-he"><thead><tr><th>Data</th><th>Tipo</th><th>Tempo</th><th>Valor Est.*</th><th>Motivo</th><th>Status</th><th>Ação</th></tr></thead><tbody></tbody></table>
-    </div>
-  </div>
-
-  <div id="view-ferias" class="view hidden">
-    <div class="header"><div class="title"><h1>Controle de Férias</h1></div></div>
-    <div class="card">
-        <h3>Histórico</h3>
-        <table id="tb-ferias"><thead><tr><th>Início</th><th>Dias</th><th>Status</th></tr></thead><tbody><tr><td colspan="3">Sem registros.</td></tr></tbody></table>
-    </div>
-  </div>
-
-  <div id="view-rescisao" class="view hidden">
-    <div class="header">
-        <div class="title"><h1>Simulador de Rescisão</h1><p>Estimativa de custos para desligamento</p></div>
-    </div>
-    
-    <div class="grid-2">
-        <div class="card">
-            <h3>Dados do Desligamento</h3>
-            <div class="form-row">
-                <div><label>Motivo</label><select id="resc-motivo" onchange="calcRescisao()"><option value="sjc">Sem Justa Causa (Empregador)</option><option value="pedido">Pedido de Demissão</option><option value="acordo">Acordo Mútuo</option></select></div>
-                <div><label>Data Saída</label><input type="date" id="resc-data" onchange="calcRescisao()"></div>
-            </div>
-            <div class="form-row">
-                <div><label>Saldo FGTS (App)</label><input type="number" id="resc-fgts" value="0" oninput="calcRescisao()"></div>
-                <div><label>Férias Vencidas?</label><select id="resc-ferias-venc"><option value="0">Não</option><option value="1">Sim (1 período)</option></select></div>
-            </div>
-            <button class="btn btn-primary" onclick="calcRescisao()">Calcular Estimativa</button>
-        </div>
-
-        <div class="calc-box">
-            <h3>Cálculo Estimado</h3>
-            <div class="calc-line"><span>Saldo Salário</span><span id="r-saldo">R$ 0,00</span></div>
-            <div class="calc-line"><span>Aviso Prévio (Indenizado)</span><span id="r-aviso">R$ 0,00</span></div>
-            <div class="calc-line"><span>13º Proporcional</span><span id="r-d13">R$ 0,00</span></div>
-            <div class="calc-line"><span>Férias Prop. + 1/3</span><span id="r-ferias">R$ 0,00</span></div>
-            <div class="calc-line"><span>Multa FGTS</span><span id="r-multa">R$ 0,00</span></div>
-            <div class="calc-line text-danger"><span>(-) INSS Rescisão</span><span id="r-inss">- R$ 0,00</span></div>
-            <div class="calc-line total"><span>Total Rescisório</span><span id="r-total">R$ 0,00</span></div>
-        </div>
+    <div class="card" style="margin-top:20px">
+      <h3>Pendentes</h3>
+      <table id="tb-he"><thead><tr><th>Data</th><th>Tipo</th><th>Tempo</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
     </div>
   </div>
 
   <div id="view-config" class="view hidden">
-    <div class="header"><div class="title"><h1>Configurações</h1></div></div>
-    <div class="card" style="max-width:600px">
-        <h3>Dados Contratuais (Nuvem)</h3>
-        <div class="form-group"><label>Nome Funcionário</label><input type="text" id="cfg-nome"></div>
-        <div class="form-group"><label>Salário Base</label><input type="number" id="cfg-salario" step="0.01"></div>
-        <div class="form-group"><label>Data Admissão</label><input type="date" id="cfg-admissao"></div>
-        <button class="btn btn-primary" onclick="saveConfig()">Salvar Alterações</button>
+    <div class="header"><div class="page-title">Configurações</div></div>
+    <div class="card" style="max-width:500px">
+       <label>Nome Funcionário</label><input type="text" id="c-nome" style="margin-bottom:15px">
+       <label>Salário Base (R$)</label><input type="number" id="c-sal" step="0.01" style="margin-bottom:15px">
+       <label>Data Admissão</label><input type="date" id="c-adm" style="margin-bottom:15px">
+       
+       <div style="background:#fffbeb; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #e2e8f0">
+         <label>Dia de Vencimento (Guia)</label>
+         <select id="c-venc">
+           <option value="7">Dia 07 (Padrão DAE eSocial)</option>
+           <option value="20">Dia 20 (GPS/Contabilidade Específica)</option>
+         </select>
+         <p style="font-size:11px; color:#b45309; margin-top:5px">
+           *Nota: Se escolher dia 20 para Boleto Unificado (DAE), verifique se há cobrança de juros, pois a lei estipula dia 07.
+         </p>
+       </div>
+
+       <button class="btn btn-primary" onclick="saveConfig()">Salvar Configurações</button>
     </div>
   </div>
 
 </main>
 
 <script>
-// ==========================================
-// LÓGICA DO SISTEMA
-// ==========================================
+// ============================================
+// SISTEMA DE GESTÃO DOMÉSTICA - v5.0 (Flexible)
+// ============================================
 
-let API_URL = localStorage.getItem('gd_api_url');
-let DB = { config: {}, horasExtras: [], pagamentos: [] };
-
+let API = localStorage.getItem('gd_v5_url');
+let DB = { config: { vencimento: '7' }, horasExtras: [], pagamentos: [] };
 const $ = id => document.getElementById(id);
 const BRL = v => Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 const NUM = v => parseFloat(v) || 0;
-const ISO = d => d ? new Date(d).toISOString().split('T')[0] : '';
-
-// --- INICIALIZAÇÃO E NAVEGAÇÃO ---
 
 window.onload = () => {
-  // Ajustar inputs de data para hoje
-  document.querySelectorAll('input[type="date"]').forEach(i => i.value = new Date().toISOString().split('T')[0]);
-  
-  if(API_URL) {
-    $('api-url').value = API_URL;
-    initData();
-  } else {
-    $('loader').classList.add('hidden');
-  }
-};
-
-function nav(viewId) {
-    // 1. Esconde todas as views
-    document.querySelectorAll('.view').forEach(e => e.classList.add('hidden'));
-    
-    // 2. Mostra a view desejada
-    const target = $('view-' + viewId);
-    if(target) target.classList.remove('hidden');
-
-    // 3. Atualiza Sidebar (Correção do erro "currentTarget")
-    document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-    
-    // Procura o botão que tem o atributo data-target igual à viewId
-    const activeBtn = document.querySelector(`.nav-item[data-target="${viewId}"]`);
-    if(activeBtn) activeBtn.classList.add('active');
+  $('he-data').value = new Date().toISOString().split('T')[0];
+  if(API) { $('api-url').value = API; init(); } 
+  else { $('loader').classList.add('hidden'); }
 }
 
-function connectAPI() {
-    const url = $('api-url').value.trim();
-    if(!url) return alert('Digite a URL');
-    localStorage.setItem('gd_api_url', url);
-    API_URL = url;
-    initData();
+function nav(view) {
+  document.querySelectorAll('.view').forEach(e => e.classList.add('hidden'));
+  $( 'view-' + view ).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+  document.querySelector(`[data-t="${view}"]`).classList.add('active');
+}
+
+function connect() {
+  const url = $('api-url').value.trim();
+  if(!url) return alert('URL inválida');
+  localStorage.setItem('gd_v5_url', url);
+  API = url;
+  init();
 }
 
 function logout() {
-    localStorage.removeItem('gd_api_url');
-    location.reload();
+  localStorage.removeItem('gd_v5_url');
+  location.reload();
 }
 
-async function initData() {
-    if(!API_URL) return;
+async function init() {
+  $('login').classList.add('hidden');
+  $('loader').classList.remove('hidden');
+  try {
+    const res = await fetch(API, {method:'POST', body:JSON.stringify({action:'init'})});
+    const json = await res.json();
+    if(json.status === 'error') throw new Error(json.message);
+    DB = json;
+    // Garante valor padrão se vazio
+    if(!DB.config.vencimento) DB.config.vencimento = '7';
     
-    $('login-screen').classList.add('hidden');
-    $('loader').classList.remove('hidden');
-    
-    try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'init' }) });
-        const json = await res.json();
-        if(json.status === 'error') throw new Error(json.message);
-
-        DB = json;
-        renderAll();
-        
-        $('overlay').classList.add('hidden');
-        $('app-sidebar').classList.remove('hidden');
-        $('app-main').classList.remove('hidden');
-        nav('dashboard'); // Navega para dashboard com a função corrigida
-        
-    } catch(e) {
-        alert('Erro: ' + e.message);
-        $('loader').classList.add('hidden');
-        $('login-screen').classList.remove('hidden');
-    }
+    render();
+    $('loader').classList.add('hidden');
+    $('sidebar').classList.remove('hidden');
+    $('app').classList.remove('hidden');
+    nav('dashboard');
+  } catch(e) {
+    alert('Erro: ' + e.message);
+    $('loader').classList.add('hidden');
+    $('login').classList.remove('hidden');
+  }
 }
 
-// --- RENDERIZAÇÃO ---
-
-function renderAll() {
-    // Configs
-    $('cfg-nome').value = DB.config.nome || '';
-    $('cfg-salario').value = DB.config.salario || '';
-    $('cfg-admissao').value = DB.config.admissao || '';
-
-    // Tabelas
-    renderTable('tb-pag', DB.pagamentos.reverse(), r => `
-        <td>${r.mes}/${r.ano}</td>
-        <td>${BRL(r.salarioBase)}</td>
-        <td>${BRL(NUM(r.totalHE)+NUM(r.valorDSR))}</td>
-        <td>${BRL(r.valorINSS)}</td>
-        <td style="font-weight:bold">${BRL(r.liquido)}</td>
-        <td><span class="badge badge-ok">Pago</span></td>
-    `);
-
-    renderTable('tb-he', DB.horasExtras.reverse(), r => {
-        const val = r.valorEstimado || calcHEValue(r.minutos, r.tipo);
-        return `
-        <td>${ISO(r.data)}</td>
-        <td>${r.tipo}%</td>
-        <td>${r.minutos}m</td>
-        <td>${BRL(val)}</td>
-        <td>${r.motivo}</td>
-        <td><span class="badge badge-${r.status==='Pago'?'pago':'pendente'}">${r.status}</span></td>
-        <td>${r.status!=='Pago' ? `<button class="btn-sm" onclick="markPaid('horasExtras','${r.id}')">✔</button>` : '-'}</td>
-    `});
-
-    updateDashboard(); // Nova lógica de previsão
-    simulaPag();       // Atualiza simulador da aba pagamentos
-}
-
-function updateDashboard() {
-    const sal = NUM(DB.config.salario);
-    if(!sal) return;
-
-    // 1. Filtra HE Pendentes (Status diferente de 'Pago')
-    const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
-    
-    let totalMin50 = 0;
-    let totalMin100 = 0;
-    let countPendentes = pendentes.length;
-
-    pendentes.forEach(h => {
-        // Verifica se é 100% (procura "100" no texto), senão assume 50%
-        const tipoStr = String(h.tipo || '');
-        if (tipoStr.includes('100')) {
-            totalMin100 += NUM(h.minutos);
-        } else {
-            totalMin50 += NUM(h.minutos);
-        }
-    });
-
-    // 2. Cálculos Financeiros
-    const vHora = sal / 220;
-    const v50 = vHora * 1.5 * (totalMin50/60);
-    const v100 = vHora * 2 * (totalMin100/60);
-    const totalHE = v50 + v100;
-    
-    // Estimativa de DSR (Média de 20% ou cálculo de 5/25 avos)
-    const dsrEst = (totalHE / 25) * 5;
-    
-    const bruto = sal + totalHE + dsrEst;
-    const inss = calcINSS(bruto);
-    const liquidoPrevisto = bruto - inss;
-
-    // 3. Atualização da Interface
-    if($('dash-prev-liq')) $('dash-prev-liq').innerText = BRL(liquidoPrevisto);
-    if($('dash-he-count')) $('dash-he-count').innerText = countPendentes;
-    if($('dash-he-val')) $('dash-he-val').innerText = `Valor HE: ${BRL(totalHE)}`;
-    
-    if($('dash-prev-details')) {
-        $('dash-prev-details').innerHTML = `
-            Salário Base: ${BRL(sal)} <br>
-            + HE Pendentes: ${BRL(totalHE)} <br>
-            + DSR (Estimado): ${BRL(dsrEst)} <br>
-            <span style="color:var(--danger)">- INSS (Estimado): ${BRL(inss)}</span>
-        `;
-    }
-
-    // Atualiza tabela de referência de valores
-    if($('v-h-norm')) $('v-h-norm').innerText = BRL(vHora);
-    if($('v-h-50')) $('v-h-50').innerText = BRL(vHora * 1.5);
-    if($('v-h-100')) $('v-h-100').innerText = BRL(vHora * 2);
-}
-function renderTable(id, data, fn) {
-    const tbody = $(id).querySelector('tbody');
-    tbody.innerHTML = '';
-    if(!data.length) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">Sem dados</td></tr>';
-    data.forEach(d => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = fn(d);
-        tbody.appendChild(tr);
-    });
-}
-
-// --- CÁLCULOS MATEMÁTICOS ---
-
-function calcHEValue(min, tipo) {
-    const sal = NUM(DB.config.salario);
-    // Se o tipo tiver "100" (ex: "100%"), usa fator 2. Senão, fator 1.5.
-    const fator = String(tipo).includes('100') ? 2 : 1.5;
-    return (sal / 220) * fator * (min / 60);
-}
+// --- CÁLCULOS 2025 ---
 
 function calcINSS(base) {
-    let desc = 0;
-    let anterior = 0;
-    const faixas = [
-        {lim: 1518.00, aliq: 0.075},
-        {lim: 2793.88, aliq: 0.09},
-        {lim: 4190.83, aliq: 0.12},
-        {lim: 8157.41, aliq: 0.14}
-    ];
-    for(let f of faixas) {
-        if(base > anterior) {
-            let baseFaixa = Math.min(base, f.lim) - anterior;
-            desc += baseFaixa * f.aliq;
-            anterior = f.lim;
-        }
+  let desc = 0, ant = 0;
+  // Tabela Progressiva 2025 (Estimada)
+  const faixas = [
+    {lim: 1518.00, aliq: 0.075},
+    {lim: 2793.88, aliq: 0.09},
+    {lim: 4190.83, aliq: 0.12},
+    {lim: 8157.41, aliq: 0.14}
+  ];
+  for(let f of faixas) {
+    if(base > ant) {
+      let val = Math.min(base, f.lim) - ant;
+      desc += val * f.aliq;
+      ant = f.lim;
     }
-    return Math.min(desc, 951.63); // Teto 2025
+  }
+  return Math.min(desc, 951.63);
 }
 
-function simulaPag() {
-    // 1. Definição do Salário (Correção do erro "sal is not defined")
-    const sal = NUM(DB.config.salario);
-    if(!sal) return; // Se não tiver salário configurado, para aqui
-    
-    // 2. Coleta dos Inputs
-    const h50 = NUM($('pag-he50').value);
-    const h100 = NUM($('pag-he100').value);
-    const uteis = NUM($('pag-uteis').value) || 25;
-    const dsrDias = NUM($('pag-dsr').value) || 5;
-    const faltas = NUM($('pag-faltas').value);
-    const adiant = NUM($('pag-adiant').value);
-
-    // 3. Cálculos
-    const vHora = sal / 220; // Divisor padrão
-    const v50 = vHora * 1.5 * (h50/60);
-    const v100 = vHora * 2 * (h100/60);
-    const totalHE = v50 + v100;
-
-    const valDSR = (totalHE / uteis) * dsrDias;
-    const bruto = sal + totalHE + valDSR - faltas;
-    const inss = calcINSS(bruto);
-    const liq = bruto - inss - adiant;
-
-    // 4. Atualização da Tela
-    $('c-sal').innerText = BRL(sal);
-    $('c-he').innerText = BRL(totalHE);
-    $('c-dsr').innerText = BRL(valDSR);
-    $('c-fal').innerText = `- ${BRL(faltas)}`;
-    $('c-base').innerText = BRL(bruto);
-    $('c-inss').innerText = `- ${BRL(inss)}`;
-    $('c-adiant').innerText = `- ${BRL(adiant)}`;
-    $('c-liq').innerText = BRL(liq);
-    
-    // Retorna valores para uso no botão "Salvar"
-    return { sal, totalHE, valDSR, faltas, inss, adiant, liq };
+function calcIRRF(base, inss) {
+  const baseIR = base - inss; 
+  let ir = 0, deducao = 0;
+  // Tabela IRRF 2025
+  if (baseIR <= 2259.20) return 0;
+  else if (baseIR <= 2826.65) { ir = baseIR * 0.075; deducao = 169.44; }
+  else if (baseIR <= 3751.05) { ir = baseIR * 0.15; deducao = 381.44; }
+  else if (baseIR <= 4664.68) { ir = baseIR * 0.225; deducao = 662.77; }
+  else { ir = baseIR * 0.275; deducao = 896.00; }
+  return Math.max(0, ir - deducao);
 }
 
-function calcRescisao() {
-    const sal = NUM(DB.config.salario);
-    const dataFim = new Date($('resc-data').value);
-    const admissao = new Date(DB.config.admissao);
-    const motivo = $('resc-motivo').value;
-    const saldoFGTS = NUM($('resc-fgts').value);
-    const feriasVenc = $('resc-ferias-venc').value === '1';
-
-    if(!sal || isNaN(dataFim.getTime())) return;
-
-    const diasTrab = dataFim.getDate();
-    const saldoSal = (sal / 30) * diasTrab;
-    
-    let aviso = 0, multa = 0;
-    if(motivo === 'sjc') {
-        const anos = (dataFim - admissao) / (1000 * 60 * 60 * 24 * 365);
-        const diasAviso = 30 + (Math.floor(Math.max(0, anos)) * 3);
-        aviso = (sal / 30) * Math.min(diasAviso, 90);
-        multa = saldoFGTS * 0.4;
-    } else if (motivo === 'acordo') {
-        aviso = (sal / 30) * 15;
-        multa = saldoFGTS * 0.2;
-    }
-
-    const mes = dataFim.getMonth() + 1;
-    const d13 = (sal / 12) * mes;
-    const feriasProp = (sal / 12) * mes * (4/3);
-    const feriasVencidasVal = feriasVenc ? (sal * 4/3) : 0;
-
-    const bruto = saldoSal + aviso + d13 + feriasProp + feriasVencidasVal + multa;
-    const inss = calcINSS(saldoSal + d13); 
-
-    $('r-saldo').innerText = BRL(saldoSal);
-    $('r-aviso').innerText = BRL(aviso);
-    $('r-d13').innerText = BRL(d13);
-    $('r-ferias').innerText = BRL(feriasProp + feriasVencidasVal);
-    $('r-multa').innerText = BRL(multa);
-    $('r-inss').innerText = `- ${BRL(inss)}`;
-    $('r-total').innerText = BRL(bruto - inss);
+function calcDAE(bruto, inssFunc, irrfFunc) {
+  const fgts = bruto * 0.08;
+  const fgtsComp = bruto * 0.032; 
+  const inssPatr = bruto * 0.08;
+  const gilrat = bruto * 0.008; 
+  const totalGuia = fgts + fgtsComp + inssPatr + gilrat + inssFunc + irrfFunc;
+  return { fgts, fgtsComp, inssPatr, gilrat, totalGuia };
 }
 
-// --- AÇÕES DO SERVIDOR ---
+// --- RENDER ---
 
-async function saveAction(action, payload) {
-    const btn = event.target;
-    const txt = btn.innerText;
-    btn.innerText = '...'; btn.disabled = true;
+function simula() {
+  const sal = NUM(DB.config.salario);
+  if(!sal) return {};
 
-    try {
-        const res = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, payload })
-        });
-        const json = await res.json();
-        if(json.status === 'error') throw new Error(json.message);
-        
-        await initData();
-        alert('Salvo com sucesso!');
-    } catch(e) {
-        alert('Erro: ' + e.message);
-    } finally {
-        btn.innerText = txt; btn.disabled = false;
-    }
+  const h50 = NUM($('p-h50').value);
+  const h100 = NUM($('p-h100').value);
+  const uteis = NUM($('p-uteis').value) || 25;
+  const dsr = NUM($('p-dsr').value) || 5;
+  const falta = NUM($('p-falta').value);
+  const adiant = NUM($('p-adiant').value);
+
+  const vH = sal / 220;
+  const tHE = (vH * 1.5 * h50/60) + (vH * 2 * h100/60);
+  const tDSR = (tHE / uteis) * dsr;
+  const bruto = sal + tHE + tDSR - falta;
+  
+  const inss = calcINSS(bruto);
+  const irrf = calcIRRF(bruto, inss);
+  const liq = bruto - inss - irrf - adiant;
+  const dae = calcDAE(bruto, inss, irrf);
+
+  $('h-sal').innerText = BRL(sal);
+  $('h-he').innerText = BRL(tHE + tDSR);
+  $('h-fal').innerText = BRL(falta);
+  $('h-base').innerText = BRL(bruto);
+  $('h-inss').innerText = `- ${BRL(inss)}`;
+  $('h-irrf').innerText = `- ${BRL(irrf)}`;
+  $('h-adiant').innerText = `- ${BRL(adiant)}`;
+  $('h-liq').innerText = BRL(liq);
+  
+  // Atualiza aviso de vencimento conforme configuração
+  const diaVenc = DB.config.vencimento || '7';
+  if(diaVenc === '20') {
+    $('h-aviso-venc').innerHTML = `Configurado para <strong>Dia 20</strong>. <br>Verifique se sua contabilidade incluiu juros ou se é pagamento via GPS (Sem FGTS).`;
+    $('h-aviso-venc').style.borderColor = '#f97316';
+  } else {
+    $('h-aviso-venc').innerHTML = `Vencimento do DAE: <strong>Dia 07</strong> (Padrão Legal)`;
+    $('h-aviso-venc').style.borderColor = '#10b981';
+  }
+
+  return { sal, tHE, tDSR, bruto, inss, irrf, liq, dae, falta, adiant };
 }
 
-function savePagamento() {
-    const calc = simulaPag();
-    const payload = {
-        sheet: 'pagamentos',
-        data: {
-            mes: $('pag-mes').value,
-            ano: $('pag-ano').value,
-            salarioBase: calc.sal,
-            totalHE: calc.totalHE,
-            valorDSR: calc.valDSR,
-            totalFaltas: calc.faltas,
-            valorINSS: calc.inss,
-            adiantamento: calc.adiant,
-            liquido: calc.liq,
-            status: 'Pago'
-        }
-    };
-    if(confirm(`Confirmar pagamento líquido de ${BRL(calc.liq)}?`)) {
-        saveAction('save', payload);
-    }
+function updateDashboard(pendentes) {
+  const sal = NUM(DB.config.salario);
+  if(!sal) return;
+  
+  let min50 = 0, min100 = 0;
+  pendentes.forEach(h => {
+    if(String(h.tipo).includes('100')) min100 += NUM(h.minutos);
+    else min50 += NUM(h.minutos);
+  });
+  
+  const vH = sal / 220;
+  const heVal = (vH * 1.5 * min50/60) + (vH * 2 * min100/60);
+  const dsrVal = (heVal / 25) * 5; 
+  const bruto = sal + heVal + dsrVal;
+  const inss = calcINSS(bruto);
+  const irrf = calcIRRF(bruto, inss);
+  const liq = bruto - inss - irrf;
+  const dae = calcDAE(bruto, inss, irrf);
+
+  $('kpi-custo').innerText = BRL(liq + dae.totalGuia);
+  $('kpi-dae').innerText = BRL(dae.totalGuia);
+  $('kpi-he').innerText = pendentes.length;
+  $('kpi-he-val').innerText = `Passivo: ${BRL(heVal)}`;
+  
+  const diaVenc = DB.config.vencimento || '7';
+  $('lbl-vencimento').innerText = `Vence dia ${diaVenc}`;
+
+  $('d-sal').innerText = BRL(sal);
+  $('d-he').innerText = BRL(heVal);
+  $('d-dsr').innerText = BRL(dsrVal);
+  $('d-inss').innerText = `- ${BRL(inss)}`;
+  $('d-irrf').innerText = `- ${BRL(irrf)}`;
+  $('d-pagar').innerText = BRL(liq);
+
+  $('d-fgts').innerText = BRL(dae.fgts);
+  $('d-fgts-comp').innerText = BRL(dae.fgtsComp);
+  $('d-patr').innerText = BRL(dae.inssPatr);
+  $('d-gilrat').innerText = BRL(dae.gilrat);
+  $('d-rep-inss').innerText = `+ ${BRL(inss)}`;
+  $('d-total-dae').innerText = BRL(dae.totalGuia);
 }
 
-function saveHE() {
-    const min = $('he-min').value;
-    const tipo = $('he-tipo').value;
-    const val = calcHEValue(min, tipo);
-    const payload = {
-        sheet: 'horasExtras',
-        data: {
-            data: $('he-data').value,
-            tipo: tipo,
-            minutos: min,
-            valorEstimado: val,
-            motivo: $('he-motivo').value,
-            status: 'Pendente'
-        }
-    };
-    saveAction('save', payload);
+function render() {
+  $('c-nome').value = DB.config.nome || '';
+  $('c-sal').value = DB.config.salario || '';
+  $('c-adm').value = DB.config.admissao || '';
+  $('c-venc').value = DB.config.vencimento || '7';
+  
+  const sal = NUM(DB.config.salario);
+  $('ref-hn').innerText = BRL(sal/220);
+  $('ref-h50').innerText = BRL((sal/220)*1.5);
+  $('ref-h100').innerText = BRL((sal/220)*2);
+
+  const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
+  updateDashboard(pendentes);
+  
+  const tbHe = $('tb-he').querySelector('tbody');
+  tbHe.innerHTML = '';
+  pendentes.reverse().forEach(h => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${h.data}</td><td><span class="badge bg-yellow">${h.tipo}%</span></td><td>${h.minutos}m</td><td>${BRL(h.valorEstimado)}</td><td>${h.status}</td><td><button class="btn btn-sm btn-primary" onclick="markPaid('horasExtras','${h.id}')">Pago</button></td>`;
+    tbHe.appendChild(tr);
+  });
+
+  const tbPag = $('tb-pag').querySelector('tbody');
+  tbPag.innerHTML = '';
+  DB.pagamentos.slice().reverse().forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.mes}/${p.ano}</td><td>${BRL(NUM(p.salarioBase)+NUM(p.totalHE)+NUM(p.valorDSR))}</td><td style="color:#ef4444">- ${BRL(NUM(p.valorINSS))}</td><td style="font-weight:bold">${BRL(p.liquido)}</td><td><span class="badge bg-green">Pago</span></td>`;
+    tbPag.appendChild(tr);
+  });
+  simula();
+}
+
+async function apiCall(action, payload) {
+  const btn = event.target;
+  const txt = btn.innerText;
+  btn.innerText = '...'; btn.disabled = true;
+  try {
+    const res = await fetch(API, {method:'POST', body:JSON.stringify({action, payload})});
+    const j = await res.json();
+    if(j.status === 'error') throw new Error(j.message);
+    await init();
+    alert('Salvo com sucesso!');
+  } catch(e) { alert(e.message); } 
+  finally { btn.innerText = txt; btn.disabled = false; }
 }
 
 function saveConfig() {
-    const payload = {
-        nome: $('cfg-nome').value,
-        salario: $('cfg-salario').value,
-        admissao: $('cfg-admissao').value
-    };
-    saveAction('updateConfig', payload);
+  apiCall('updateConfig', {
+    nome: $('c-nome').value,
+    salario: $('c-sal').value,
+    admissao: $('c-adm').value,
+    vencimento: $('c-venc').value // Salva a preferência
+  });
 }
 
-function markPaid(sheet, id) {
-    if(confirm('Marcar como pago?')) {
-        saveAction('markPaid', { sheet, id, status: 'Pago' });
-    }
+function saveHE() {
+  const min = $('he-min').value;
+  const tipo = $('he-tipo').value;
+  const sal = NUM(DB.config.salario);
+  const val = (sal/220) * (String(tipo).includes('100')?2:1.5) * (min/60);
+  apiCall('save', { sheet: 'horasExtras', data: { data: $('he-data').value, tipo, minutos: min, valorEstimado: val, motivo: $('he-motivo').value, status: 'Pendente' } });
 }
+
+function saveFolha() {
+  const s = simula();
+  if(!s.sal) return;
+  if(confirm(`Confirmar Líquido: ${BRL(s.liq)}?`)) {
+    apiCall('save', { sheet: 'pagamentos', data: { mes: $('p-mes').value, ano: $('p-ano').value, salarioBase: s.sal, totalHE: s.tHE, valorDSR: s.tDSR, valorINSS: s.inss, liquido: s.liq, status: 'Pago' } });
+  }
+}
+function markPaid(sheet, id) { if(confirm('Confirmar?')) apiCall('markPaid', {sheet, id, status:'Pago'}); }
 </script>
 </body>
 </html>
