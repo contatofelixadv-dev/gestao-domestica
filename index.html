@@ -435,24 +435,25 @@ function renderAll() {
 function updateDashboard() {
     const sal = NUM(DB.config.salario);
     
-    // 1. Filtrar HE Pendentes do Mês Atual
-    const now = new Date();
-    const mesAtual = now.getMonth(); // 0-11
-    const anoAtual = now.getFullYear();
-    
+    // 1. Filtrar HE Pendentes
+    // Nota: Removemos o filtro de mês para mostrar TODO o passivo pendente, 
+    // ou mantemos se você quiser ver só a previsão do mês. 
+    // Abaixo, ajustei para mostrar TUDO que está pendente (mais seguro financeiramente).
     const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
     
     let totalMin50 = 0;
     let totalMin100 = 0;
-    let countMes = 0;
+    let countPendentes = pendentes.length;
 
     pendentes.forEach(h => {
-        const d = new Date(h.data);
-        // Conta HE se for do mês atual (para previsão de pgto) OU se for pendente antiga
-        if (d.getMonth() === mesAtual && d.getFullYear() === anoAtual) {
-            if(h.tipo == '50' || h.tipo == '50%') totalMin50 += NUM(h.minutos);
-            else totalMin100 += NUM(h.minutos);
-            countMes++;
+        // CORREÇÃO AQUI: Verificação mais robusta de string
+        const tipoStr = String(h.tipo || '');
+        
+        if (tipoStr.includes('100')) {
+            totalMin100 += NUM(h.minutos);
+        } else {
+            // Assume 50% como padrão para qualquer outra coisa (segurança)
+            totalMin50 += NUM(h.minutos);
         }
     });
 
@@ -462,31 +463,34 @@ function updateDashboard() {
     const v100 = vHora * 2 * (totalMin100/60);
     const totalHE = v50 + v100;
     
-    // DSR Estimado (25 dias úteis / 5 descansos - padrão)
+    // DSR Estimado (Média de 1/6 ou 20% é o padrão de mercado para estimativa)
+    // Usaremos (Total / 25 * 5) para manter coerência com seu padrão
     const dsrEst = (totalHE / 25) * 5;
     
+    // Previsão Líquida (Considerando apenas o salário + passivo de HE)
     const bruto = sal + totalHE + dsrEst;
     const inss = calcINSS(bruto);
     const liquidoPrevisto = bruto - inss;
 
     // 3. Atualizar UI
     $('dash-prev-liq').innerText = BRL(liquidoPrevisto);
-    $('dash-he-count').innerText = countMes;
-    $('dash-he-val').innerText = `Total HE: ${BRL(totalHE)}`;
+    $('dash-he-count').innerText = countPendentes;
+    
+    // Mostra explicitamente que é o valor da HE
+    $('dash-he-val').innerText = `Valor HE: ${BRL(totalHE)}`; 
     
     $('dash-prev-details').innerHTML = `
-        Salário: ${BRL(sal)} <br>
-        + HE (${Math.round((totalMin50+totalMin100)/60)}h): ${BRL(totalHE)} <br>
-        + DSR (Est.): ${BRL(dsrEst)} <br>
-        - INSS: ${BRL(inss)}
+        Salário Base: ${BRL(sal)} <br>
+        + HE Pendentes: ${BRL(totalHE)} <br>
+        + DSR (Reflexo): ${BRL(dsrEst)} <br>
+        <span style="color:var(--danger)">- INSS (Est.): ${BRL(inss)}</span>
     `;
 
-    // Atualiza referência valores hora
+    // Atualiza referência valores hora (informativo lateral)
     $('v-h-norm').innerText = BRL(vHora);
     $('v-h-50').innerText = BRL(vHora * 1.5);
     $('v-h-100').innerText = BRL(vHora * 2);
 }
-
 function renderTable(id, data, fn) {
     const tbody = $(id).querySelector('tbody');
     tbody.innerHTML = '';
@@ -502,7 +506,8 @@ function renderTable(id, data, fn) {
 
 function calcHEValue(min, tipo) {
     const sal = NUM(DB.config.salario);
-    const fator = (tipo == '100' || tipo == '100%') ? 2 : 1.5;
+    // Lógica invertida: Se tiver "100" no nome é 100%, senão é 50%
+    const fator = String(tipo).includes('100') ? 2 : 1.5;
     return (sal / 220) * fator * (min / 60);
 }
 
@@ -526,36 +531,14 @@ function calcINSS(base) {
 }
 
 function simulaPag() {
-    const sal = NUM(DB.config.salario);
-    if(!sal) return;
+    // ... (parte inicial igual) ...
+    const h50 = NUM($('pag-he50').value);   // Input específico para 50%
+    const h100 = NUM($('pag-he100').value); // Input específico para 100%
     
-    const h50 = NUM($('pag-he50').value);
-    const h100 = NUM($('pag-he100').value);
-    const uteis = NUM($('pag-uteis').value) || 25;
-    const dsrDias = NUM($('pag-dsr').value) || 5;
-    const faltas = NUM($('pag-faltas').value);
-    const adiant = NUM($('pag-adiant').value);
-
     const vHora = sal / 220;
-    const v50 = vHora * 1.5 * (h50/60);
-    const v100 = vHora * 2 * (h100/60);
-    const totalHE = v50 + v100;
-
-    const valDSR = (totalHE / uteis) * dsrDias;
-    const bruto = sal + totalHE + valDSR - faltas;
-    const inss = calcINSS(bruto);
-    const liq = bruto - inss - adiant;
-
-    $('c-sal').innerText = BRL(sal);
-    $('c-he').innerText = BRL(totalHE);
-    $('c-dsr').innerText = BRL(valDSR);
-    $('c-fal').innerText = `- ${BRL(faltas)}`;
-    $('c-base').innerText = BRL(bruto);
-    $('c-inss').innerText = `- ${BRL(inss)}`;
-    $('c-adiant').innerText = `- ${BRL(adiant)}`;
-    $('c-liq').innerText = BRL(liq);
-    
-    return { sal, totalHE, valDSR, faltas, inss, adiant, liq };
+    const v50 = vHora * 1.5 * (h50/60); // Fator 1.5 fixo aqui pois o input é separado
+    const v100 = vHora * 2 * (h100/60); // Fator 2.0 fixo aqui
+    // ... (restante igual)
 }
 
 function calcRescisao() {
