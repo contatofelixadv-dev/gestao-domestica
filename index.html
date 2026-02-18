@@ -39,11 +39,12 @@
   .card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
   
   /* METRICS */
-  .metric { padding: 20px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .metric { padding: 20px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; }
   .metric-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
   .metric-value { font-size: 28px; font-weight: 700; color: var(--text); }
-  .metric-sub { font-size: 12px; margin-top: 4px; }
-
+  .metric-sub { font-size: 12px; margin-top: 4px; color: var(--text-light); }
+  .metric-highlight { color: var(--primary-dark); }
+  
   /* FORMS & TABLES */
   .form-group { margin-bottom: 16px; }
   .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
@@ -96,7 +97,7 @@
   <div id="login-screen">
     <div style="font-size:48px; margin-bottom:16px">☁️</div>
     <h2 style="margin-bottom:8px">Conectar Sistema</h2>
-    <p style="color:var(--text-light); margin-bottom:24px; font-size:13px">Cole a URL do Web App do Google Apps Script para acessar os dados da sua funcionária.</p>
+    <p style="color:var(--text-light); margin-bottom:24px; font-size:13px">Cole a URL do Web App do Google Apps Script para acessar os dados.</p>
     <div class="form-group">
       <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/..." style="text-align:center">
     </div>
@@ -107,12 +108,12 @@
 <aside id="app-sidebar" class="hidden">
   <div class="logo">🏠 Gestão Doméstica</div>
   <nav>
-    <button class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
-    <button class="nav-item" onclick="nav('pagamentos')"><span class="nav-icon">💰</span>Pagamentos</button>
-    <button class="nav-item" onclick="nav('horas')"><span class="nav-icon">⏱️</span>Banco de Horas</button>
-    <button class="nav-item" onclick="nav('ferias')"><span class="nav-icon">🌴</span>Férias</button>
-    <button class="nav-item" onclick="nav('rescisao')"><span class="nav-icon">⚠️</span>Rescisão</button>
-    <button class="nav-item" onclick="nav('config')"><span class="nav-icon">⚙️</span>Configurações</button>
+    <button class="nav-item active" onclick="nav('dashboard')" data-target="dashboard"><span class="nav-icon">📊</span>Dashboard</button>
+    <button class="nav-item" onclick="nav('pagamentos')" data-target="pagamentos"><span class="nav-icon">💰</span>Pagamentos</button>
+    <button class="nav-item" onclick="nav('horas')" data-target="horas"><span class="nav-icon">⏱️</span>Banco de Horas</button>
+    <button class="nav-item" onclick="nav('ferias')" data-target="ferias"><span class="nav-icon">🌴</span>Férias</button>
+    <button class="nav-item" onclick="nav('rescisao')" data-target="rescisao"><span class="nav-icon">⚠️</span>Rescisão</button>
+    <button class="nav-item" onclick="nav('config')" data-target="config"><span class="nav-icon">⚙️</span>Configurações</button>
   </nav>
   <div style="padding:20px; margin-top:auto">
     <div style="font-size:11px; color:var(--text-light); text-align:center">
@@ -128,26 +129,35 @@
     <div class="header">
       <div class="title">
         <h1>Visão Geral</h1>
-        <p>Resumo da situação atual</p>
+        <p>Resumo em tempo real</p>
       </div>
       <button class="btn btn-sm btn-primary" onclick="initData()">🔄 Atualizar Dados</button>
     </div>
 
     <div class="grid-3">
-      <div class="metric">
-        <div class="metric-label">Salário Base</div>
-        <div class="metric-value" style="color:var(--primary-dark)" id="dash-salario">R$ 0,00</div>
-        <div class="metric-sub" id="dash-nome">Funcionário...</div>
+      <div class="metric" style="border-left: 4px solid var(--primary-dark)">
+        <div class="metric-label">Previsão Líquida (Este Mês)</div>
+        <div class="metric-value metric-highlight" id="dash-prev-liq">R$ 0,00</div>
+        <div class="metric-sub">Salário + HE Pendentes - INSS</div>
       </div>
+
       <div class="metric">
-        <div class="metric-label">H.E. Pendentes</div>
+        <div class="metric-label">H.E. Pendentes (Mês)</div>
         <div class="metric-value" style="color:var(--warning)" id="dash-he-count">0</div>
-        <div class="metric-sub text-danger" id="dash-he-val">Est. R$ 0,00</div>
+        <div class="metric-sub text-danger" id="dash-he-val">Valor: R$ 0,00</div>
       </div>
+
       <div class="metric">
         <div class="metric-label">Próximo DAE</div>
         <div class="metric-value" style="color:var(--success)" id="dash-dae">Dia 07</div>
         <div class="metric-sub">Vencimento</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Detalhamento da Previsão Atual</h3>
+      <div id="dash-prev-details" style="font-size:13px; color:var(--text-light)">
+        Carregando...
       </div>
     </div>
 
@@ -161,19 +171,19 @@
 
   <div id="view-pagamentos" class="view hidden">
     <div class="header">
-      <div class="title"><h1>Folha de Pagamento</h1><p>Cálculo mensal com DSR e INSS 2025</p></div>
+      <div class="title"><h1>Folha de Pagamento</h1><p>Histórico e Fechamento de Mês</p></div>
     </div>
 
     <div class="grid-2">
       <div class="card">
-        <h3>Lançar Pagamento</h3>
+        <h3>Lançar Pagamento (Fechamento)</h3>
         <div class="form-row">
           <div><label>Mês</label><select id="pag-mes"><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
           <div><label>Ano</label><input type="number" id="pag-ano" value="2026"></div>
         </div>
         
         <div class="form-row">
-          <div><label>Dias Úteis (Mês)</label><input type="number" id="pag-uteis" value="25" oninput="simulaPag()"></div>
+          <div><label>Dias Úteis</label><input type="number" id="pag-uteis" value="25" oninput="simulaPag()"></div>
           <div><label>Domingos/Fer.</label><input type="number" id="pag-dsr" value="5" oninput="simulaPag()"></div>
         </div>
 
@@ -257,7 +267,7 @@
     <div class="header"><div class="title"><h1>Controle de Férias</h1></div></div>
     <div class="card">
         <h3>Histórico</h3>
-        <table id="tb-ferias"><thead><tr><th>Início</th><th>Dias</th><th>Status</th></tr></thead><tbody><tr><td colspan="3">Sem registros. Use o Google Sheets para editar.</td></tr></tbody></table>
+        <table id="tb-ferias"><thead><tr><th>Início</th><th>Dias</th><th>Status</th></tr></thead><tbody><tr><td colspan="3">Sem registros.</td></tr></tbody></table>
     </div>
   </div>
 
@@ -308,19 +318,47 @@
 
 <script>
 // ==========================================
-// LÓGICA DO FRONTEND (JS)
+// LÓGICA DO SISTEMA
 // ==========================================
 
 let API_URL = localStorage.getItem('gd_api_url');
 let DB = { config: {}, horasExtras: [], pagamentos: [] };
 
-// --- UTILS ---
 const $ = id => document.getElementById(id);
 const BRL = v => Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 const NUM = v => parseFloat(v) || 0;
 const ISO = d => d ? new Date(d).toISOString().split('T')[0] : '';
 
-// --- AUTH & INIT ---
+// --- INICIALIZAÇÃO E NAVEGAÇÃO ---
+
+window.onload = () => {
+  // Ajustar inputs de data para hoje
+  document.querySelectorAll('input[type="date"]').forEach(i => i.value = new Date().toISOString().split('T')[0]);
+  
+  if(API_URL) {
+    $('api-url').value = API_URL;
+    initData();
+  } else {
+    $('loader').classList.add('hidden');
+  }
+};
+
+function nav(viewId) {
+    // 1. Esconde todas as views
+    document.querySelectorAll('.view').forEach(e => e.classList.add('hidden'));
+    
+    // 2. Mostra a view desejada
+    const target = $('view-' + viewId);
+    if(target) target.classList.remove('hidden');
+
+    // 3. Atualiza Sidebar (Correção do erro "currentTarget")
+    document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+    
+    // Procura o botão que tem o atributo data-target igual à viewId
+    const activeBtn = document.querySelector(`.nav-item[data-target="${viewId}"]`);
+    if(activeBtn) activeBtn.classList.add('active');
+}
+
 function connectAPI() {
     const url = $('api-url').value.trim();
     if(!url) return alert('Digite a URL');
@@ -351,7 +389,7 @@ async function initData() {
         $('overlay').classList.add('hidden');
         $('app-sidebar').classList.remove('hidden');
         $('app-main').classList.remove('hidden');
-        nav('dashboard');
+        nav('dashboard'); // Navega para dashboard com a função corrigida
         
     } catch(e) {
         alert('Erro: ' + e.message);
@@ -360,30 +398,13 @@ async function initData() {
     }
 }
 
-// --- RENDER ---
+// --- RENDERIZAÇÃO ---
+
 function renderAll() {
-    // Config
+    // Configs
     $('cfg-nome').value = DB.config.nome || '';
     $('cfg-salario').value = DB.config.salario || '';
     $('cfg-admissao').value = DB.config.admissao || '';
-
-    // Dash
-    $('dash-salario').innerText = BRL(DB.config.salario);
-    $('dash-nome').innerText = DB.config.nome || 'Não Configurado';
-    
-    // HE Pendentes
-    const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
-    $('dash-he-count').innerText = pendentes.length;
-    
-    // Calc estimativa HE pendentes
-    const sal = NUM(DB.config.salario);
-    const valHora = sal / 220;
-    let totalEst = 0;
-    pendentes.forEach(h => {
-        const perc = h.tipo == '100' ? 2 : 1.5;
-        totalEst += valHora * perc * (h.minutos/60);
-    });
-    $('dash-he-val').innerText = `Est. ${BRL(totalEst)}`;
 
     // Tabelas
     renderTable('tb-pag', DB.pagamentos.reverse(), r => `
@@ -396,7 +417,7 @@ function renderAll() {
     `);
 
     renderTable('tb-he', DB.horasExtras.reverse(), r => {
-        const val = r.valorEstimado || calcHEValue(r.minutos, r.tipo); // Usa salvo ou calcula on-fly
+        const val = r.valorEstimado || calcHEValue(r.minutos, r.tipo);
         return `
         <td>${ISO(r.data)}</td>
         <td>${r.tipo}%</td>
@@ -406,13 +427,64 @@ function renderAll() {
         <td><span class="badge badge-${r.status==='Pago'?'pago':'pendente'}">${r.status}</span></td>
         <td>${r.status!=='Pago' ? `<button class="btn-sm" onclick="markPaid('horasExtras','${r.id}')">✔</button>` : '-'}</td>
     `});
-    
-    // Atualiza valores de referência
-    $('v-h-norm').innerText = BRL(valHora);
-    $('v-h-50').innerText = BRL(valHora * 1.5);
-    $('v-h-100').innerText = BRL(valHora * 2);
 
-    simulaPag();
+    updateDashboard(); // Nova lógica de previsão
+    simulaPag();       // Atualiza simulador da aba pagamentos
+}
+
+function updateDashboard() {
+    const sal = NUM(DB.config.salario);
+    
+    // 1. Filtrar HE Pendentes do Mês Atual
+    const now = new Date();
+    const mesAtual = now.getMonth(); // 0-11
+    const anoAtual = now.getFullYear();
+    
+    const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
+    
+    let totalMin50 = 0;
+    let totalMin100 = 0;
+    let countMes = 0;
+
+    pendentes.forEach(h => {
+        const d = new Date(h.data);
+        // Conta HE se for do mês atual (para previsão de pgto) OU se for pendente antiga
+        if (d.getMonth() === mesAtual && d.getFullYear() === anoAtual) {
+            if(h.tipo == '50' || h.tipo == '50%') totalMin50 += NUM(h.minutos);
+            else totalMin100 += NUM(h.minutos);
+            countMes++;
+        }
+    });
+
+    // 2. Calcular Valores
+    const vHora = sal / 220;
+    const v50 = vHora * 1.5 * (totalMin50/60);
+    const v100 = vHora * 2 * (totalMin100/60);
+    const totalHE = v50 + v100;
+    
+    // DSR Estimado (25 dias úteis / 5 descansos - padrão)
+    const dsrEst = (totalHE / 25) * 5;
+    
+    const bruto = sal + totalHE + dsrEst;
+    const inss = calcINSS(bruto);
+    const liquidoPrevisto = bruto - inss;
+
+    // 3. Atualizar UI
+    $('dash-prev-liq').innerText = BRL(liquidoPrevisto);
+    $('dash-he-count').innerText = countMes;
+    $('dash-he-val').innerText = `Total HE: ${BRL(totalHE)}`;
+    
+    $('dash-prev-details').innerHTML = `
+        Salário: ${BRL(sal)} <br>
+        + HE (${Math.round((totalMin50+totalMin100)/60)}h): ${BRL(totalHE)} <br>
+        + DSR (Est.): ${BRL(dsrEst)} <br>
+        - INSS: ${BRL(inss)}
+    `;
+
+    // Atualiza referência valores hora
+    $('v-h-norm').innerText = BRL(vHora);
+    $('v-h-50').innerText = BRL(vHora * 1.5);
+    $('v-h-100').innerText = BRL(vHora * 2);
 }
 
 function renderTable(id, data, fn) {
@@ -426,12 +498,31 @@ function renderTable(id, data, fn) {
     });
 }
 
-// --- CALCULADORES ---
+// --- CÁLCULOS MATEMÁTICOS ---
 
 function calcHEValue(min, tipo) {
     const sal = NUM(DB.config.salario);
-    const fator = tipo == '100' ? 2 : 1.5;
+    const fator = (tipo == '100' || tipo == '100%') ? 2 : 1.5;
     return (sal / 220) * fator * (min / 60);
+}
+
+function calcINSS(base) {
+    let desc = 0;
+    let anterior = 0;
+    const faixas = [
+        {lim: 1518.00, aliq: 0.075},
+        {lim: 2793.88, aliq: 0.09},
+        {lim: 4190.83, aliq: 0.12},
+        {lim: 8157.41, aliq: 0.14}
+    ];
+    for(let f of faixas) {
+        if(base > anterior) {
+            let baseFaixa = Math.min(base, f.lim) - anterior;
+            desc += baseFaixa * f.aliq;
+            anterior = f.lim;
+        }
+    }
+    return Math.min(desc, 951.63); // Teto 2025
 }
 
 function simulaPag() {
@@ -445,20 +536,14 @@ function simulaPag() {
     const faltas = NUM($('pag-faltas').value);
     const adiant = NUM($('pag-adiant').value);
 
-    // 1. HE
     const vHora = sal / 220;
     const v50 = vHora * 1.5 * (h50/60);
     const v100 = vHora * 2 * (h100/60);
     const totalHE = v50 + v100;
 
-    // 2. DSR
     const valDSR = (totalHE / uteis) * dsrDias;
-
-    // 3. Bruto & INSS
     const bruto = sal + totalHE + valDSR - faltas;
     const inss = calcINSS(bruto);
-
-    // 4. Líquido
     const liq = bruto - inss - adiant;
 
     $('c-sal').innerText = BRL(sal);
@@ -473,26 +558,6 @@ function simulaPag() {
     return { sal, totalHE, valDSR, faltas, inss, adiant, liq };
 }
 
-function calcINSS(base) {
-    let desc = 0;
-    let resto = base;
-    const faixas = [
-        {lim: 1518.00, aliq: 0.075},
-        {lim: 2793.88, aliq: 0.09},
-        {lim: 4190.83, aliq: 0.12},
-        {lim: 8157.41, aliq: 0.14}
-    ];
-    let anterior = 0;
-    for(let f of faixas) {
-        if(base > anterior) {
-            let baseFaixa = Math.min(base, f.lim) - anterior;
-            desc += baseFaixa * f.aliq;
-            anterior = f.lim;
-        }
-    }
-    return Math.min(desc, 951.63); // Teto
-}
-
 function calcRescisao() {
     const sal = NUM(DB.config.salario);
     const dataFim = new Date($('resc-data').value);
@@ -501,32 +566,29 @@ function calcRescisao() {
     const saldoFGTS = NUM($('resc-fgts').value);
     const feriasVenc = $('resc-ferias-venc').value === '1';
 
-    if(!sal || isNaN(dataFim)) return;
+    if(!sal || isNaN(dataFim.getTime())) return;
 
-    // Lógica simplificada
     const diasTrab = dataFim.getDate();
     const saldoSal = (sal / 30) * diasTrab;
     
     let aviso = 0, multa = 0;
     if(motivo === 'sjc') {
-        // 30 dias + 3 dias por ano completo
         const anos = (dataFim - admissao) / (1000 * 60 * 60 * 24 * 365);
-        const diasAviso = 30 + (Math.floor(anos) * 3);
+        const diasAviso = 30 + (Math.floor(Math.max(0, anos)) * 3);
         aviso = (sal / 30) * Math.min(diasAviso, 90);
         multa = saldoFGTS * 0.4;
     } else if (motivo === 'acordo') {
-        aviso = (sal / 30) * 15; // Metade aviso
+        aviso = (sal / 30) * 15;
         multa = saldoFGTS * 0.2;
     }
 
-    // Proporcionais (estimativa: assumindo mês atual como ref)
     const mes = dataFim.getMonth() + 1;
     const d13 = (sal / 12) * mes;
-    const feriasProp = (sal / 12) * mes * (4/3); // + 1/3
+    const feriasProp = (sal / 12) * mes * (4/3);
     const feriasVencidasVal = feriasVenc ? (sal * 4/3) : 0;
 
     const bruto = saldoSal + aviso + d13 + feriasProp + feriasVencidasVal + multa;
-    const inss = calcINSS(saldoSal + d13); // INSS incide sobre saldo e 13o
+    const inss = calcINSS(saldoSal + d13); 
 
     $('r-saldo').innerText = BRL(saldoSal);
     $('r-aviso').innerText = BRL(aviso);
@@ -537,7 +599,7 @@ function calcRescisao() {
     $('r-total').innerText = BRL(bruto - inss);
 }
 
-// --- ACTIONS ---
+// --- AÇÕES DO SERVIDOR ---
 
 async function saveAction(action, payload) {
     const btn = event.target;
@@ -615,17 +677,6 @@ function markPaid(sheet, id) {
         saveAction('markPaid', { sheet, id, status: 'Pago' });
     }
 }
-
-function nav(view) {
-    document.querySelectorAll('.view').forEach(e => e.classList.add('hidden'));
-    document.getElementById('view-'+view).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-}
-
-// Init date inputs
-document.querySelectorAll('input[type="date"]').forEach(i => i.value = new Date().toISOString().split('T')[0]);
-
 </script>
 </body>
 </html>
