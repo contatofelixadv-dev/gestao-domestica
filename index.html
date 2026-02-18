@@ -3,457 +3,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão Doméstica (Online)</title>
+<title>Gestão Doméstica Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #f8fafc; --surface: #ffffff; --primary: #2563eb; --text: #1e293b; --border: #e2e8f0; --success: #16a34a; --danger: #dc2626; }
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-  body { background: var(--bg); color: var(--text); font-size: 14px; display: flex; height: 100vh; overflow: hidden; }
-  
-  /* Sidebar */
-  aside { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
-  .brand { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 30px; display: flex; align-items: center; gap: 8px; }
-  nav button { width: 100%; text-align: left; padding: 12px; border: none; background: none; color: #64748b; cursor: pointer; border-radius: 6px; font-weight: 500; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-  nav button:hover { background: #f1f5f9; color: var(--text); }
-  nav button.active { background: #eff6ff; color: var(--primary); font-weight: 600; }
-  
-  /* Main */
-  main { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
-  .view { display: none; max-width: 1000px; margin: 0 auto; }
-  .view.active { display: block; animation: fadeIn 0.3s; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  :root {
+    --bg: #f3f4f6; --surface: #ffffff;
+    --primary: #3b82f6; --primary-dark: #2563eb;
+    --text: #1f2937; --text-light: #6b7280;
+    --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    --border: #e5e7eb;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; font-size: 14px; }
 
-  /* Components */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-  .card h3 { font-size: 15px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.05em; }
-  
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-  
-  .kpi-box { background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid var(--primary); }
-  .kpi-val { font-size: 24px; font-weight: 700; margin: 5px 0; }
-  .kpi-lbl { font-size: 12px; color: #64748b; font-weight: 600; }
+  /* SIDEBAR */
+  aside { width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; }
+  .logo { padding: 24px; font-size: 20px; font-weight: 800; color: var(--primary-dark); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  nav { flex: 1; padding: 16px; overflow-y: auto; }
+  .nav-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; color: var(--text-light); background: transparent; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; margin-bottom: 4px; transition: all 0.2s; text-align: left; }
+  .nav-item:hover { background: #eff6ff; color: var(--primary); }
+  .nav-item.active { background: #dbeafe; color: var(--primary-dark); font-weight: 600; }
+  .nav-icon { width: 20px; text-align: center; font-size: 16px; }
 
-  /* Forms */
-  label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-  input, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 15px; font-size: 14px; }
-  input:focus, select:focus { outline: none; border-color: var(--primary); ring: 2px solid #eff6ff; }
-  .row { display: flex; gap: 15px; }
-  .row > div { flex: 1; }
+  /* MAIN */
+  main { flex: 1; overflow-y: auto; padding: 32px; position: relative; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .title h1 { font-size: 24px; font-weight: 700; color: var(--text); }
+  .title p { color: var(--text-light); margin-top: 4px; }
 
-  /* Buttons */
-  .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; font-size: 14px; transition: 0.2s; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover { background: #1d4ed8; }
-  .btn-outline { background: transparent; border: 1px solid var(--border); }
+  /* CARDS & GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 24px; }
+  .card { background: var(--surface); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 24px; }
+  .card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
   
-  /* Tables */
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 12px; background: #f8fafc; border-bottom: 1px solid var(--border); color: #64748b; font-weight: 600; }
-  td { padding: 12px; border-bottom: 1px solid var(--border); }
-  .status { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .status.Pendente { background: #fef3c7; color: #d97706; }
-  .status.Pago, .status.ok { background: #dcfce7; color: #15803d; }
+  /* METRICS */
+  .metric { padding: 20px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .metric-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
+  .metric-value { font-size: 28px; font-weight: 700; color: var(--text); }
+  .metric-sub { font-size: 12px; margin-top: 4px; }
 
-  /* Loader & Overlay */
-  #overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-  .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
+  /* FORMS & TABLES */
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .form-row > div { flex: 1; }
+  label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+  input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: border 0.2s; }
+  input:focus, select:focus { border-color: var(--primary); ring: 2px solid #dbeafe; }
+  
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; gap: 8px; }
+  .btn-primary { background: var(--primary-dark); color: white; }
+  .btn-primary:hover { background: var(--primary); }
+  .btn-danger { background: #fee2e2; color: var(--danger); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; padding: 12px 16px; background: #f9fafb; color: var(--text-light); font-weight: 600; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  td { padding: 14px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .badge-pendente { background: #fef3c7; color: #b45309; }
+  .badge-pago, .badge-ok { background: #d1fae5; color: #047857; }
+  .badge-aviso { background: #fee2e2; color: #b91c1c; }
+
+  /* CALC BOX (Preview) */
+  .calc-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .calc-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+  .calc-line.total { border-top: 2px solid var(--border); margin-top: 12px; padding-top: 12px; font-weight: 700; font-size: 16px; color: var(--primary-dark); }
+  .text-danger { color: var(--danger); }
+
+  /* LOADER */
+  #overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #connect-screen { max-width: 400px; width: 100%; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border); text-align: center; display: none; }
-  
-  /* Utilities */
   .hidden { display: none !important; }
+  
+  /* LOGIN SCREEN */
+  #login-screen { max-width: 400px; width: 100%; padding: 40px; background: white; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border); }
 </style>
 </head>
 <body>
 
 <div id="overlay">
-  <div id="loader">
-    <div class="spinner"></div>
-    <p style="margin-top:15px;color:#64748b;font-weight:500">Sincronizando com a Planilha...</p>
-    <p style="font-size:12px;color:#94a3b8">Buscando dados na nuvem</p>
+  <div id="loader" class="hidden" style="text-align:center">
+    <div class="spinner" style="margin:0 auto 16px"></div>
+    <h3 style="color:var(--text)">Sincronizando...</h3>
+    <p style="color:var(--text-light)">Buscando dados no Google Sheets</p>
   </div>
 
-  <div id="connect-screen">
-    <div style="font-size:40px;margin-bottom:10px">☁️</div>
-    <h2 style="margin-bottom:10px">Conectar à Planilha</h2>
-    <p style="color:#64748b;margin-bottom:20px;font-size:13px">Cole a URL do Web App do Google Apps Script para iniciar. Seus dados ficam 100% no Google Sheets.</p>
-    <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/..." style="font-size:12px">
-    <button class="btn btn-primary" style="width:100%" onclick="saveConnection()">Conectar</button>
+  <div id="login-screen">
+    <div style="font-size:48px; margin-bottom:16px">☁️</div>
+    <h2 style="margin-bottom:8px">Conectar Sistema</h2>
+    <p style="color:var(--text-light); margin-bottom:24px; font-size:13px">Cole a URL do Web App do Google Apps Script para acessar os dados da sua funcionária.</p>
+    <div class="form-group">
+      <input type="text" id="api-url" placeholder="https://script.google.com/macros/s/..." style="text-align:center">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="connectAPI()">Acessar Painel</button>
   </div>
 </div>
 
-<aside>
-  <div class="brand">🏠 Gestão Doméstica</div>
+<aside id="app-sidebar" class="hidden">
+  <div class="logo">🏠 Gestão Doméstica</div>
   <nav>
-    <button class="active" onclick="route('dashboard')">📊 Dashboard</button>
-    <button onclick="route('pagamentos')">💰 Pagamentos</button>
-    <button onclick="route('horas')">⏱️ Horas Extras</button>
-    <button onclick="route('ferias')">🌴 Férias</button>
-    <button onclick="route('config')">⚙️ Configurações</button>
+    <button class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
+    <button class="nav-item" onclick="nav('pagamentos')"><span class="nav-icon">💰</span>Pagamentos</button>
+    <button class="nav-item" onclick="nav('horas')"><span class="nav-icon">⏱️</span>Banco de Horas</button>
+    <button class="nav-item" onclick="nav('ferias')"><span class="nav-icon">🌴</span>Férias</button>
+    <button class="nav-item" onclick="nav('rescisao')"><span class="nav-icon">⚠️</span>Rescisão</button>
+    <button class="nav-item" onclick="nav('config')"><span class="nav-icon">⚙️</span>Configurações</button>
   </nav>
-  <div style="margin-top:auto; font-size:11px; color:#94a3b8; text-align:center">
-    v2.0 Cloud Only<br>
-    <a href="#" onclick="logout()" style="color:var(--danger)">Desconectar</a>
+  <div style="padding:20px; margin-top:auto">
+    <div style="font-size:11px; color:var(--text-light); text-align:center">
+      Status: <span style="color:var(--success)">● Online</span><br>
+      <a href="#" onclick="logout()" style="color:var(--danger); text-decoration:none">Desconectar</a>
+    </div>
   </div>
 </aside>
 
-<main>
-  
-  <div id="dashboard" class="view active">
-    <div class="grid-4">
-      <div class="kpi-box">
-        <div class="kpi-lbl">FUNCIONÁRIO</div>
-        <div class="kpi-val" style="font-size:18px" id="lbl-nome">...</div>
+<main id="app-main" class="hidden">
+
+  <div id="view-dashboard" class="view">
+    <div class="header">
+      <div class="title">
+        <h1>Visão Geral</h1>
+        <p>Resumo da situação atual</p>
       </div>
-      <div class="kpi-box" style="border-color:#2563eb">
-        <div class="kpi-lbl">SALÁRIO BASE</div>
-        <div class="kpi-val" id="lbl-salario">R$ ...</div>
+      <button class="btn btn-sm btn-primary" onclick="initData()">🔄 Atualizar Dados</button>
+    </div>
+
+    <div class="grid-3">
+      <div class="metric">
+        <div class="metric-label">Salário Base</div>
+        <div class="metric-value" style="color:var(--primary-dark)" id="dash-salario">R$ 0,00</div>
+        <div class="metric-sub" id="dash-nome">Funcionário...</div>
       </div>
-      <div class="kpi-box" style="border-color:#d97706">
-        <div class="kpi-lbl">HE PENDENTES</div>
-        <div class="kpi-val" style="color:#d97706" id="lbl-he-pend">...</div>
+      <div class="metric">
+        <div class="metric-label">H.E. Pendentes</div>
+        <div class="metric-value" style="color:var(--warning)" id="dash-he-count">0</div>
+        <div class="metric-sub text-danger" id="dash-he-val">Est. R$ 0,00</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Próximo DAE</div>
+        <div class="metric-value" style="color:var(--success)" id="dash-dae">Dia 07</div>
+        <div class="metric-sub">Vencimento</div>
       </div>
     </div>
+
     <div class="card">
-      <h3>Últimos Pagamentos</h3>
-      <table id="tb-last-pag">
-        <thead><tr><th>Mês/Ano</th><th>Total Pago</th><th>Status</th></tr></thead>
-        <tbody><tr><td colspan="3" align="center">Carregando...</td></tr></tbody>
-      </table>
+      <h3>Alertas do Sistema</h3>
+      <div id="dash-alerts">
+        <p style="color:var(--text-light)">Nenhum alerta pendente.</p>
+      </div>
     </div>
   </div>
 
-  <div id="pagamentos" class="view">
+  <div id="view-pagamentos" class="view hidden">
+    <div class="header">
+      <div class="title"><h1>Folha de Pagamento</h1><p>Cálculo mensal com DSR e INSS 2025</p></div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
-        <h3>Novo Pagamento</h3>
-        <div class="row">
-          <div><label>Mês</label><select id="pag-mes"><option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option><option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option><option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option></select></div>
+        <h3>Lançar Pagamento</h3>
+        <div class="form-row">
+          <div><label>Mês</label><select id="pag-mes"><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></div>
           <div><label>Ano</label><input type="number" id="pag-ano" value="2026"></div>
         </div>
-        <div class="row">
-          <div><label>H.E. 50% (min)</label><input type="number" id="pag-h50" value="0" oninput="simulaPag()"></div>
-          <div><label>H.E. 100% (min)</label><input type="number" id="pag-h100" value="0" oninput="simulaPag()"></div>
+        
+        <div class="form-row">
+          <div><label>Dias Úteis (Mês)</label><input type="number" id="pag-uteis" value="25" oninput="simulaPag()"></div>
+          <div><label>Domingos/Fer.</label><input type="number" id="pag-dsr" value="5" oninput="simulaPag()"></div>
         </div>
-        <div class="row">
-          <div><label>Dias Úteis (DSR)</label><input type="number" id="pag-uteis" value="25" oninput="simulaPag()"></div>
-          <div><label>Domingos/Fer</label><input type="number" id="pag-dsr-dias" value="5" oninput="simulaPag()"></div>
+
+        <div class="form-row">
+          <div><label>H.E. 50% (min)</label><input type="number" id="pag-he50" value="0" oninput="simulaPag()"></div>
+          <div><label>H.E. 100% (min)</label><input type="number" id="pag-he100" value="0" oninput="simulaPag()"></div>
         </div>
-        <div class="row">
-          <div><label>Faltas (R$)</label><input type="number" id="pag-faltas" value="0" oninput="simulaPag()"></div>
-          <div><label>Adiantamento (R$)</label><input type="number" id="pag-adiant" value="0" oninput="simulaPag()"></div>
+
+        <div class="form-row">
+          <div><label>Faltas (R$)</label><input type="number" id="pag-faltas" value="0" step="0.01" oninput="simulaPag()"></div>
+          <div><label>Adiantamento (R$)</label><input type="number" id="pag-adiant" value="0" step="0.01" oninput="simulaPag()"></div>
         </div>
-        <button class="btn btn-primary" style="width:100%" onclick="savePagamento()">Lançar Pagamento</button>
+
+        <button class="btn btn-primary" style="width:100%" onclick="savePagamento()">💾 Salvar Folha</button>
       </div>
 
-      <div class="card" style="background:#f8fafc">
-        <h3>Prévia do Cálculo</h3>
-        <div id="pag-preview" style="display:flex; flex-direction:column; gap:8px; font-size:14px">
-          </div>
+      <div class="calc-box">
+        <h3>Demonstrativo (Prévia)</h3>
+        <div class="calc-line"><span>Salário Base</span><span id="c-sal">R$ 0,00</span></div>
+        <div class="calc-line"><span>(+) Total H.Extras</span><span id="c-he">R$ 0,00</span></div>
+        <div class="calc-line"><span>(+) Reflexo DSR s/ HE</span><span id="c-dsr">R$ 0,00</span></div>
+        <div class="calc-line text-danger"><span>(-) Faltas</span><span id="c-fal">- R$ 0,00</span></div>
+        <div style="border-bottom:1px dashed #ccc; margin:8px 0;"></div>
+        <div class="calc-line" style="font-weight:600"><span>= Base INSS/FGTS</span><span id="c-base">R$ 0,00</span></div>
+        <div class="calc-line text-danger"><span>(-) INSS (Progressivo)</span><span id="c-inss">- R$ 0,00</span></div>
+        <div class="calc-line text-danger"><span>(-) Adiantamento</span><span id="c-adiant">- R$ 0,00</span></div>
+        <div class="calc-line total"><span>Líquido a Pagar</span><span id="c-liq">R$ 0,00</span></div>
       </div>
     </div>
-    
+
     <div class="card">
-      <h3>Histórico Completo</h3>
-      <table id="tb-pag"><thead><tr><th>Data</th><th>Salário</th><th>H.Extras + DSR</th><th>Líquido</th><th>Status</th></tr></thead><tbody></tbody></table>
+      <h3>Histórico</h3>
+      <table id="tb-pag"><thead><tr><th>Data</th><th>Salário Base</th><th>H.E. + DSR</th><th>INSS</th><th>Líquido</th><th>Status</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
 
-  <div id="horas" class="view">
-    <div class="card">
-      <h3>Registrar Hora Extra</h3>
-      <div class="row">
-        <div><label>Data</label><input type="date" id="he-data"></div>
-        <div><label>Minutos</label><input type="number" id="he-min" placeholder="Ex: 60"></div>
-        <div><label>Tipo</label><select id="he-tipo"><option value="50%">50% (Dia Útil)</option><option value="100%">100% (Dom/Fer)</option></select></div>
-      </div>
-      <input type="text" id="he-motivo" placeholder="Motivo (Opcional)">
-      <button class="btn btn-primary" onclick="saveHE()" style="margin-top:10px">Salvar</button>
+  <div id="view-horas" class="view hidden">
+    <div class="header">
+      <div class="title"><h1>Banco de Horas</h1><p>Registro de horas suplementares</p></div>
     </div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <h3>Nova Hora Extra</h3>
+            <div class="form-row">
+                <div><label>Data</label><input type="date" id="he-data"></div>
+                <div><label>Minutos</label><input type="number" id="he-min" placeholder="Ex: 60"></div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Tipo</label>
+                    <select id="he-tipo">
+                        <option value="50">50% (Dia útil)</option>
+                        <option value="100">100% (Dom/Feriado)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Motivo</label>
+                <input type="text" id="he-motivo" placeholder="Ex: Jantar atrasou">
+            </div>
+            <button class="btn btn-primary" onclick="saveHE()">Registrar</button>
+        </div>
+        <div class="metric" style="height:fit-content">
+            <div class="metric-label">Valor da Hora (Estimativa)</div>
+            <div style="font-size:14px; margin-bottom:10px">Baseado no salário atual</div>
+            <div class="calc-line"><span>Hora Normal:</span><span id="v-h-norm">R$ 0,00</span></div>
+            <div class="calc-line"><span>Hora 50%:</span><span id="v-h-50">R$ 0,00</span></div>
+            <div class="calc-line"><span>Hora 100%:</span><span id="v-h-100">R$ 0,00</span></div>
+            <div style="margin-top:10px; font-size:12px; color:var(--text-light)">*Não inclui DSR neste cálculo rápido.</div>
+        </div>
+    </div>
+
     <div class="card">
-      <h3>Banco de Horas</h3>
-      <table id="tb-he"><thead><tr><th>Data</th><th>Tipo</th><th>Min</th><th>Motivo</th><th>Status</th></tr></thead><tbody></tbody></table>
+      <h3>Histórico</h3>
+      <table id="tb-he"><thead><tr><th>Data</th><th>Tipo</th><th>Tempo</th><th>Valor Est.*</th><th>Motivo</th><th>Status</th><th>Ação</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
 
-  <div id="config" class="view">
-    <div class="card" style="border-left:4px solid #8b5cf6">
-      <h3>Dados do Contrato (Salvos na Nuvem)</h3>
-      <p style="font-size:12px; color:#64748b; margin-bottom:15px">Esses dados são compartilhados com quem acessar a planilha.</p>
-      
-      <label>Nome do Funcionário</label>
-      <input type="text" id="cfg-nome">
-      
-      <label>Salário Base (R$)</label>
-      <input type="number" id="cfg-salario" step="0.01">
-      
-      <label>Data de Admissão</label>
-      <input type="date" id="cfg-admissao">
-      
-      <button class="btn btn-primary" onclick="saveCloudConfig()">Salvar na Nuvem</button>
+  <div id="view-ferias" class="view hidden">
+    <div class="header"><div class="title"><h1>Controle de Férias</h1></div></div>
+    <div class="card">
+        <h3>Histórico</h3>
+        <table id="tb-ferias"><thead><tr><th>Início</th><th>Dias</th><th>Status</th></tr></thead><tbody><tr><td colspan="3">Sem registros. Use o Google Sheets para editar.</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div id="view-rescisao" class="view hidden">
+    <div class="header">
+        <div class="title"><h1>Simulador de Rescisão</h1><p>Estimativa de custos para desligamento</p></div>
     </div>
     
-    <div class="card">
-      <h3>Conexão</h3>
-      <label>URL do Script (Local apenas)</label>
-      <input type="text" id="cfg-url" readonly style="background:#f1f5f9; color:#94a3b8">
-      <p style="font-size:11px; color:#94a3b8">Para acessar de outro PC, use este mesmo link.</p>
+    <div class="grid-2">
+        <div class="card">
+            <h3>Dados do Desligamento</h3>
+            <div class="form-row">
+                <div><label>Motivo</label><select id="resc-motivo" onchange="calcRescisao()"><option value="sjc">Sem Justa Causa (Empregador)</option><option value="pedido">Pedido de Demissão</option><option value="acordo">Acordo Mútuo</option></select></div>
+                <div><label>Data Saída</label><input type="date" id="resc-data" onchange="calcRescisao()"></div>
+            </div>
+            <div class="form-row">
+                <div><label>Saldo FGTS (App)</label><input type="number" id="resc-fgts" value="0" oninput="calcRescisao()"></div>
+                <div><label>Férias Vencidas?</label><select id="resc-ferias-venc"><option value="0">Não</option><option value="1">Sim (1 período)</option></select></div>
+            </div>
+            <button class="btn btn-primary" onclick="calcRescisao()">Calcular Estimativa</button>
+        </div>
+
+        <div class="calc-box">
+            <h3>Cálculo Estimado</h3>
+            <div class="calc-line"><span>Saldo Salário</span><span id="r-saldo">R$ 0,00</span></div>
+            <div class="calc-line"><span>Aviso Prévio (Indenizado)</span><span id="r-aviso">R$ 0,00</span></div>
+            <div class="calc-line"><span>13º Proporcional</span><span id="r-d13">R$ 0,00</span></div>
+            <div class="calc-line"><span>Férias Prop. + 1/3</span><span id="r-ferias">R$ 0,00</span></div>
+            <div class="calc-line"><span>Multa FGTS</span><span id="r-multa">R$ 0,00</span></div>
+            <div class="calc-line text-danger"><span>(-) INSS Rescisão</span><span id="r-inss">- R$ 0,00</span></div>
+            <div class="calc-line total"><span>Total Rescisório</span><span id="r-total">R$ 0,00</span></div>
+        </div>
+    </div>
+  </div>
+
+  <div id="view-config" class="view hidden">
+    <div class="header"><div class="title"><h1>Configurações</h1></div></div>
+    <div class="card" style="max-width:600px">
+        <h3>Dados Contratuais (Nuvem)</h3>
+        <div class="form-group"><label>Nome Funcionário</label><input type="text" id="cfg-nome"></div>
+        <div class="form-group"><label>Salário Base</label><input type="number" id="cfg-salario" step="0.01"></div>
+        <div class="form-group"><label>Data Admissão</label><input type="date" id="cfg-admissao"></div>
+        <button class="btn btn-primary" onclick="saveConfig()">Salvar Alterações</button>
     </div>
   </div>
 
 </main>
 
 <script>
-// ============================================
-// LÓGICA DO CLIENTE (SEM CACHE DE DADOS)
-// ============================================
+// ==========================================
+// LÓGICA DO FRONTEND (JS)
+// ==========================================
 
-let API_URL = localStorage.getItem('gestao_api_url');
-let GLOBAL_DATA = null; // Dados temporários apenas enquanto a página está aberta
+let API_URL = localStorage.getItem('gd_api_url');
+let DB = { config: {}, horasExtras: [], pagamentos: [] };
 
+// --- UTILS ---
 const $ = id => document.getElementById(id);
 const BRL = v => Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const NUM = v => parseFloat(v) || 0;
+const ISO = d => d ? new Date(d).toISOString().split('T')[0] : '';
 
-// INICIALIZAÇÃO
-window.onload = () => {
-  // Ajusta data inputs para hoje
-  const today = new Date().toISOString().split('T')[0];
-  if($('he-data')) $('he-data').value = today;
-
-  if (!API_URL) {
-    $('loader').classList.add('hidden');
-    $('connect-screen').style.display = 'block';
-  } else {
-    $('cfg-url').value = API_URL;
-    fetchData();
-  }
-};
-
-// SALVAR CONEXAO
-function saveConnection() {
-  const url = $('api-url').value.trim();
-  if (!url) return alert('Cole a URL!');
-  localStorage.setItem('gestao_api_url', url);
-  API_URL = url;
-  location.reload();
+// --- AUTH & INIT ---
+function connectAPI() {
+    const url = $('api-url').value.trim();
+    if(!url) return alert('Digite a URL');
+    localStorage.setItem('gd_api_url', url);
+    API_URL = url;
+    initData();
 }
 
 function logout() {
-  if(confirm('Isso vai desconectar este computador. O link da planilha será esquecido.')) {
-    localStorage.removeItem('gestao_api_url');
+    localStorage.removeItem('gd_api_url');
     location.reload();
-  }
 }
 
-// BUSCAR DADOS (INIT)
-async function fetchData() {
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'init' })
-    });
-    const data = await res.json();
+async function initData() {
+    if(!API_URL) return;
     
-    if (data.status === 'error') throw new Error(data.message);
+    $('login-screen').classList.add('hidden');
+    $('loader').classList.remove('hidden');
     
-    GLOBAL_DATA = data;
-    renderAll();
-    $('overlay').classList.add('hidden'); // Some o loader
-    
-  } catch (err) {
-    alert('Erro ao conectar: ' + err.message);
-    $('loader').innerHTML = `<p style="color:red">Erro de conexão</p><button class="btn btn-outline" onclick="logout()">Trocar URL</button>`;
-  }
+    try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'init' }) });
+        const json = await res.json();
+        if(json.status === 'error') throw new Error(json.message);
+
+        DB = json;
+        renderAll();
+        
+        $('overlay').classList.add('hidden');
+        $('app-sidebar').classList.remove('hidden');
+        $('app-main').classList.remove('hidden');
+        nav('dashboard');
+        
+    } catch(e) {
+        alert('Erro: ' + e.message);
+        $('loader').classList.add('hidden');
+        $('login-screen').classList.remove('hidden');
+    }
 }
 
-// RENDERIZAÇÃO
+// --- RENDER ---
 function renderAll() {
-  const cfg = GLOBAL_DATA.config || {};
-  
-  // Preencher Configs
-  $('cfg-nome').value = cfg.nome || '';
-  $('cfg-salario').value = cfg.salario || '';
-  $('cfg-admissao').value = cfg.admissao || '';
+    // Config
+    $('cfg-nome').value = DB.config.nome || '';
+    $('cfg-salario').value = DB.config.salario || '';
+    $('cfg-admissao').value = DB.config.admissao || '';
 
-  // Labels Dashboard
-  $('lbl-nome').innerText = cfg.nome || 'Não configurado';
-  $('lbl-salario').innerText = BRL(cfg.salario);
-  
-  // HE Pendentes
-  const he = GLOBAL_DATA.horasExtras || [];
-  const pendentes = he.filter(h => h.status !== 'Pago').length;
-  $('lbl-he-pend').innerText = pendentes > 0 ? `${pendentes} registros` : 'Nenhuma';
+    // Dash
+    $('dash-salario').innerText = BRL(DB.config.salario);
+    $('dash-nome').innerText = DB.config.nome || 'Não Configurado';
+    
+    // HE Pendentes
+    const pendentes = DB.horasExtras.filter(h => h.status !== 'Pago');
+    $('dash-he-count').innerText = pendentes.length;
+    
+    // Calc estimativa HE pendentes
+    const sal = NUM(DB.config.salario);
+    const valHora = sal / 220;
+    let totalEst = 0;
+    pendentes.forEach(h => {
+        const perc = h.tipo == '100' ? 2 : 1.5;
+        totalEst += valHora * perc * (h.minutos/60);
+    });
+    $('dash-he-val').innerText = `Est. ${BRL(totalEst)}`;
 
-  // Tabela Pagamentos
-  const pags = (GLOBAL_DATA.pagamentos || []).reverse();
-  renderTable('tb-pag', pags, row => `
-    <td>${row.mes}/${row.ano}</td>
-    <td>${BRL(row.salarioBase)}</td>
-    <td>${BRL(Number(row.hExtrasTotal||0) + Number(row.dsrValor||0))}</td>
-    <td style="font-weight:bold">${BRL(row.total)}</td>
-    <td><span class="status ${row.status}">${row.status}</span></td>
-  `);
+    // Tabelas
+    renderTable('tb-pag', DB.pagamentos.reverse(), r => `
+        <td>${r.mes}/${r.ano}</td>
+        <td>${BRL(r.salarioBase)}</td>
+        <td>${BRL(NUM(r.totalHE)+NUM(r.valorDSR))}</td>
+        <td>${BRL(r.valorINSS)}</td>
+        <td style="font-weight:bold">${BRL(r.liquido)}</td>
+        <td><span class="badge badge-ok">Pago</span></td>
+    `);
 
-  // Tabela Últimos (Dash)
-  renderTable('tb-last-pag', pags.slice(0, 3), row => `
-    <td>${row.mes}/${row.ano}</td>
-    <td>${BRL(row.total)}</td>
-    <td><span class="status ${row.status}">${row.status}</span></td>
-  `);
+    renderTable('tb-he', DB.horasExtras.reverse(), r => {
+        const val = r.valorEstimado || calcHEValue(r.minutos, r.tipo); // Usa salvo ou calcula on-fly
+        return `
+        <td>${ISO(r.data)}</td>
+        <td>${r.tipo}%</td>
+        <td>${r.minutos}m</td>
+        <td>${BRL(val)}</td>
+        <td>${r.motivo}</td>
+        <td><span class="badge badge-${r.status==='Pago'?'pago':'pendente'}">${r.status}</span></td>
+        <td>${r.status!=='Pago' ? `<button class="btn-sm" onclick="markPaid('horasExtras','${r.id}')">✔</button>` : '-'}</td>
+    `});
+    
+    // Atualiza valores de referência
+    $('v-h-norm').innerText = BRL(valHora);
+    $('v-h-50').innerText = BRL(valHora * 1.5);
+    $('v-h-100').innerText = BRL(valHora * 2);
 
-  // Tabela HE
-  renderTable('tb-he', (GLOBAL_DATA.horasExtras || []).reverse(), row => `
-    <td>${new Date(row.data).toLocaleDateString()}</td>
-    <td>${row.tipo}</td>
-    <td>${row.minutos}m</td>
-    <td>${row.motivo}</td>
-    <td><span class="status ${row.status}">${row.status}</span></td>
-  `);
-  
-  simulaPag(); // Atualiza preview
+    simulaPag();
 }
 
 function renderTable(id, data, fn) {
-  const tbody = $(id).querySelector('tbody');
-  tbody.innerHTML = '';
-  if (!data.length) tbody.innerHTML = '<tr><td colspan="5" align="center" style="color:#94a3b8">Sem registros</td></tr>';
-  data.forEach(d => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = fn(d);
-    tbody.appendChild(tr);
-  });
-}
-
-// SIMULADOR PAGAMENTO
-function simulaPag() {
-  const sal = Number($('cfg-salario').value) || 0;
-  const h50 = Number($('pag-h50').value) || 0;
-  const h100 = Number($('pag-h100').value) || 0;
-  const diasUteis = Number($('pag-uteis').value) || 25;
-  const diasDsr = Number($('pag-dsr-dias').value) || 5;
-  const faltasVal = Number($('pag-faltas').value) || 0;
-  const adiant = Number($('pag-adiant').value) || 0;
-
-  // Calculos
-  const vHora = sal / 220; // Divisor padrao
-  const vHe50 = vHora * 1.5 * (h50/60);
-  const vHe100 = vHora * 2.0 * (h100/60);
-  const totalHe = vHe50 + vHe100;
-  
-  const dsr = (totalHe / diasUteis) * diasDsr;
-  
-  const bruto = sal + totalHe + dsr - faltasVal;
-  
-  // INSS 2025 aprox progressivo
-  let inss = 0;
-  let baseResto = bruto;
-  const faixas = [{lim:1518, aliq:0.075}, {lim:2793, aliq:0.09}, {lim:4190, aliq:0.12}, {lim:8157, aliq:0.14}];
-  let anterior = 0;
-  for(let f of faixas) {
-    if(bruto > anterior) {
-      let baseFaixa = Math.min(bruto, f.lim) - anterior;
-      inss += baseFaixa * f.aliq;
-      anterior = f.lim;
-    }
-  }
-  if (inss > 951.63) inss = 951.63; // Teto
-
-  const liquido = bruto - inss - adiant;
-
-  $('pag-preview').innerHTML = `
-    <div style="display:flex;justify-content:space-between"><span>Salário</span><span>${BRL(sal)}</span></div>
-    <div style="display:flex;justify-content:space-between"><span>H.Extras</span><span>${BRL(totalHe)}</span></div>
-    <div style="display:flex;justify-content:space-between"><span>Reflexo DSR</span><span>${BRL(dsr)}</span></div>
-    <div style="display:flex;justify-content:space-between;color:red"><span>Faltas</span><span>- ${BRL(faltasVal)}</span></div>
-    <div style="border-top:1px dashed #ccc; margin:5px 0"></div>
-    <div style="display:flex;justify-content:space-between;font-weight:bold"><span>Bruto</span><span>${BRL(bruto)}</span></div>
-    <div style="display:flex;justify-content:space-between;color:red"><span>INSS</span><span>- ${BRL(inss)}</span></div>
-    <div style="display:flex;justify-content:space-between;color:red"><span>Adiantamento</span><span>- ${BRL(adiant)}</span></div>
-    <div style="background:#dcfce7; color:#166534; padding:8px; border-radius:4px; font-weight:bold; text-align:center; margin-top:5px">
-      Líquido: ${BRL(liquido)}
-    </div>
-  `;
-  
-  return { sal, totalHe, dsr, faltasVal, inss, adiant, liquido };
-}
-
-// AÇÕES (POST)
-async function sendData(action, payload) {
-  $('overlay').classList.remove('hidden');
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action, payload })
+    const tbody = $(id).querySelector('tbody');
+    tbody.innerHTML = '';
+    if(!data.length) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">Sem dados</td></tr>';
+    data.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = fn(d);
+        tbody.appendChild(tr);
     });
-    const json = await res.json();
-    if(json.status === 'error') throw new Error(json.message);
+}
+
+// --- CALCULADORES ---
+
+function calcHEValue(min, tipo) {
+    const sal = NUM(DB.config.salario);
+    const fator = tipo == '100' ? 2 : 1.5;
+    return (sal / 220) * fator * (min / 60);
+}
+
+function simulaPag() {
+    const sal = NUM(DB.config.salario);
+    if(!sal) return;
     
-    await fetchData(); // Recarrega tudo atualizado da nuvem
-    alert('Salvo com sucesso!');
-  } catch(e) {
-    alert('Erro: ' + e.message);
-    $('overlay').classList.add('hidden');
-  }
+    const h50 = NUM($('pag-he50').value);
+    const h100 = NUM($('pag-he100').value);
+    const uteis = NUM($('pag-uteis').value) || 25;
+    const dsrDias = NUM($('pag-dsr').value) || 5;
+    const faltas = NUM($('pag-faltas').value);
+    const adiant = NUM($('pag-adiant').value);
+
+    // 1. HE
+    const vHora = sal / 220;
+    const v50 = vHora * 1.5 * (h50/60);
+    const v100 = vHora * 2 * (h100/60);
+    const totalHE = v50 + v100;
+
+    // 2. DSR
+    const valDSR = (totalHE / uteis) * dsrDias;
+
+    // 3. Bruto & INSS
+    const bruto = sal + totalHE + valDSR - faltas;
+    const inss = calcINSS(bruto);
+
+    // 4. Líquido
+    const liq = bruto - inss - adiant;
+
+    $('c-sal').innerText = BRL(sal);
+    $('c-he').innerText = BRL(totalHE);
+    $('c-dsr').innerText = BRL(valDSR);
+    $('c-fal').innerText = `- ${BRL(faltas)}`;
+    $('c-base').innerText = BRL(bruto);
+    $('c-inss').innerText = `- ${BRL(inss)}`;
+    $('c-adiant').innerText = `- ${BRL(adiant)}`;
+    $('c-liq').innerText = BRL(liq);
+    
+    return { sal, totalHE, valDSR, faltas, inss, adiant, liq };
+}
+
+function calcINSS(base) {
+    let desc = 0;
+    let resto = base;
+    const faixas = [
+        {lim: 1518.00, aliq: 0.075},
+        {lim: 2793.88, aliq: 0.09},
+        {lim: 4190.83, aliq: 0.12},
+        {lim: 8157.41, aliq: 0.14}
+    ];
+    let anterior = 0;
+    for(let f of faixas) {
+        if(base > anterior) {
+            let baseFaixa = Math.min(base, f.lim) - anterior;
+            desc += baseFaixa * f.aliq;
+            anterior = f.lim;
+        }
+    }
+    return Math.min(desc, 951.63); // Teto
+}
+
+function calcRescisao() {
+    const sal = NUM(DB.config.salario);
+    const dataFim = new Date($('resc-data').value);
+    const admissao = new Date(DB.config.admissao);
+    const motivo = $('resc-motivo').value;
+    const saldoFGTS = NUM($('resc-fgts').value);
+    const feriasVenc = $('resc-ferias-venc').value === '1';
+
+    if(!sal || isNaN(dataFim)) return;
+
+    // Lógica simplificada
+    const diasTrab = dataFim.getDate();
+    const saldoSal = (sal / 30) * diasTrab;
+    
+    let aviso = 0, multa = 0;
+    if(motivo === 'sjc') {
+        // 30 dias + 3 dias por ano completo
+        const anos = (dataFim - admissao) / (1000 * 60 * 60 * 24 * 365);
+        const diasAviso = 30 + (Math.floor(anos) * 3);
+        aviso = (sal / 30) * Math.min(diasAviso, 90);
+        multa = saldoFGTS * 0.4;
+    } else if (motivo === 'acordo') {
+        aviso = (sal / 30) * 15; // Metade aviso
+        multa = saldoFGTS * 0.2;
+    }
+
+    // Proporcionais (estimativa: assumindo mês atual como ref)
+    const mes = dataFim.getMonth() + 1;
+    const d13 = (sal / 12) * mes;
+    const feriasProp = (sal / 12) * mes * (4/3); // + 1/3
+    const feriasVencidasVal = feriasVenc ? (sal * 4/3) : 0;
+
+    const bruto = saldoSal + aviso + d13 + feriasProp + feriasVencidasVal + multa;
+    const inss = calcINSS(saldoSal + d13); // INSS incide sobre saldo e 13o
+
+    $('r-saldo').innerText = BRL(saldoSal);
+    $('r-aviso').innerText = BRL(aviso);
+    $('r-d13').innerText = BRL(d13);
+    $('r-ferias').innerText = BRL(feriasProp + feriasVencidasVal);
+    $('r-multa').innerText = BRL(multa);
+    $('r-inss').innerText = `- ${BRL(inss)}`;
+    $('r-total').innerText = BRL(bruto - inss);
+}
+
+// --- ACTIONS ---
+
+async function saveAction(action, payload) {
+    const btn = event.target;
+    const txt = btn.innerText;
+    btn.innerText = '...'; btn.disabled = true;
+
+    try {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, payload })
+        });
+        const json = await res.json();
+        if(json.status === 'error') throw new Error(json.message);
+        
+        await initData();
+        alert('Salvo com sucesso!');
+    } catch(e) {
+        alert('Erro: ' + e.message);
+    } finally {
+        btn.innerText = txt; btn.disabled = false;
+    }
 }
 
 function savePagamento() {
-  const calc = simulaPag();
-  const payload = {
-    sheet: 'pagamentos',
-    data: {
-      mes: $('pag-mes').value,
-      ano: $('pag-ano').value,
-      salarioBase: calc.sal,
-      hExtrasTotal: calc.totalHe,
-      dsrValor: calc.dsr,
-      faltas: calc.faltasVal,
-      inss: calc.inss,
-      adiantamento: calc.adiant,
-      total: calc.liquido,
-      status: 'Pago'
+    const calc = simulaPag();
+    const payload = {
+        sheet: 'pagamentos',
+        data: {
+            mes: $('pag-mes').value,
+            ano: $('pag-ano').value,
+            salarioBase: calc.sal,
+            totalHE: calc.totalHE,
+            valorDSR: calc.valDSR,
+            totalFaltas: calc.faltas,
+            valorINSS: calc.inss,
+            adiantamento: calc.adiant,
+            liquido: calc.liq,
+            status: 'Pago'
+        }
+    };
+    if(confirm(`Confirmar pagamento líquido de ${BRL(calc.liq)}?`)) {
+        saveAction('save', payload);
     }
-  };
-  if(confirm(`Confirmar pagamento de ${BRL(calc.liquido)}?`)) {
-    sendData('save', payload);
-  }
 }
 
 function saveHE() {
-  const payload = {
-    sheet: 'horasExtras',
-    data: {
-      data: $('he-data').value,
-      tipo: $('he-tipo').value,
-      minutos: $('he-min').value,
-      motivo: $('he-motivo').value,
-      status: 'Pendente'
+    const min = $('he-min').value;
+    const tipo = $('he-tipo').value;
+    const val = calcHEValue(min, tipo);
+    const payload = {
+        sheet: 'horasExtras',
+        data: {
+            data: $('he-data').value,
+            tipo: tipo,
+            minutos: min,
+            valorEstimado: val,
+            motivo: $('he-motivo').value,
+            status: 'Pendente'
+        }
+    };
+    saveAction('save', payload);
+}
+
+function saveConfig() {
+    const payload = {
+        nome: $('cfg-nome').value,
+        salario: $('cfg-salario').value,
+        admissao: $('cfg-admissao').value
+    };
+    saveAction('updateConfig', payload);
+}
+
+function markPaid(sheet, id) {
+    if(confirm('Marcar como pago?')) {
+        saveAction('markPaid', { sheet, id, status: 'Pago' });
     }
-  };
-  if(!payload.data.minutos) return alert('Informe os minutos');
-  sendData('save', payload);
 }
 
-function saveCloudConfig() {
-  const payload = {
-    nome: $('cfg-nome').value,
-    salario: $('cfg-salario').value,
-    admissao: $('cfg-admissao').value
-  };
-  if(!payload.salario) return alert('Informe o salário');
-  sendData('saveConfig', payload);
+function nav(view) {
+    document.querySelectorAll('.view').forEach(e => e.classList.add('hidden'));
+    document.getElementById('view-'+view).classList.remove('hidden');
+    document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+    event.currentTarget.classList.add('active');
 }
 
-// Roteamento Simples
-function route(viewId) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-  
-  $(viewId).classList.add('active');
-  // Hack para achar o botão e marcar active
-  const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.innerText.toLowerCase().includes(viewId.substring(0,3)));
-  if(btn) btn.classList.add('active');
-}
+// Init date inputs
+document.querySelectorAll('input[type="date"]').forEach(i => i.value = new Date().toISOString().split('T')[0]);
+
 </script>
 </body>
 </html>
